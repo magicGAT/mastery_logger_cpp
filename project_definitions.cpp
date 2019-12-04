@@ -5,6 +5,137 @@
 
 using namespace std;
 
+
+// fuction called in a loop to write activities, one at a time, to a file
+Activity write_act(Entry parent)
+{
+
+}
+// function called in a loop to write expenditures, one at a time, to a file
+Expenditure write_ex(Entry parent)
+{
+
+}
+
+Entry generate_entry(User subject)
+{
+	vector<string> activity;
+	vector<string> expenditures;
+
+	bool gate_0 = false, gate_1 = false;
+	char choice_0 = 'g', choice_1 = 'y' , choice_2 = 'g', choice_3 = 'y', choice_4 = 'y', choice_5 = 'g', choice_6;
+
+	cout << "Now we will write an entry for today's activities and expenditures" << endl;
+	
+	while (choice_0 != 'a' && choice_0 != 'e')
+	{
+		cout << "Which would you like to do first? ('a'/'e')" << endl;
+		cin >> choice_0;
+	}
+
+	(choice_0 == 'a' ? gate_0 = true : gate_0 = false)
+
+	if (choice_0 == true)
+	{
+		int counter_0 = 1;
+		string name_box0;
+
+		cout << "Ok lets, list some activities" << endl;
+
+		while (choice_1 != 'n')
+		{
+			 cout << "Please name one of your activities today (" << counter_0 << "): ";
+			 
+			 getline(cin, name_box0);
+			 activity.push_back(name_box0)
+			 counter_0++;
+
+			 cout << endl << endl << "Do you have more activites to report? ('n' to quit)" << endl;
+			 cin >> choice_1
+		}
+
+		while (choice_2 != 'y' && choice_2 != 'n')
+		{
+			cout << "Now that we have a list of activities, would you like to record some expenditures? ('y'/'n')" << endl;
+			cin >> choice_2;
+			cin.ignore();
+		}
+
+		if (choice_2 == 'y')
+		{
+			counter_1 = 1;
+			string name_box1; 
+			
+			while (choice_3 != 'n')
+			{
+				cout << "Please name an expenditure (" << counter_1 << "): ";
+				getline(cin, name_box1);
+				counter_1++;
+
+				cout << endl << endl << "Do you have more expenditures to record? ('n' to quit)" << endl;
+				cin >> choice_3
+			}
+		}
+
+	else
+	{
+		cout << "Ok, lets list some expenditures" << endl;
+
+		counter_2 = 1;
+		string name_box2; 
+			
+		while (choice_4 != 'n')
+		{
+			cout << "Please name an expenditure (" << counter_2 << "): ";
+			getline(cin, name_box2);
+			counter_2++;
+
+			cout << endl << endl << "Do you have more expenditures to record? ('n' to quit)" << endl;
+			cin >> choice_4;
+			cin.ignore();
+		}
+		
+		while (choice_5 != 'y' && choice_5 != 'n')
+		{
+			cout << "Now that we have a list of expenditures, would you like to record some activities? ('y'/'n')" << endl;
+			cin >> choice_5;
+		}
+
+		if (choice_5 == 'y')
+		{
+			int counter_3 = 1;
+			string name_box3;
+
+			while (choice_6 != 'n')
+			{
+				cout << "Please name one of your activities today (" << counter_3 << "): ";
+			 
+				getline(cin, name_box3);
+				activity.push_back(name_box3)
+				counter_3++;
+
+				cout << endl << endl << "Do you have more activites to report? ('n' to quit)" << endl;
+				cin >> choice_6
+				cin.ignore();
+			}
+		}
+	}
+
+	cout << "Ok! You have recorded " << activity.size() << " activities and ";
+	cout << expenditures.size() << " expenditures!" << endl;
+
+
+		// insert option to start over here (same with the profile creation) (easier when things are more modular, simply quit and re-call the function)
+
+
+	}
+}
+// writes a whole activity to a file by calling the above helper functions
+bool write_to_file(Entry author)
+{
+
+}
+
 int time_o_day()
 {
 	time_t my_time = time(0);
@@ -316,28 +447,7 @@ User greeter()
 	return subject;
 }
 
-// perhap split this into multiple fuctions, one for activities, another for expenditures and a third
-// for storing them until the larger recording function is finished
-void take_record(string[] act_names , string[] comments , float[] hours, float[] prices, int&, int&)
-{
-	
-}
 
-// fuction called in a loop to write activities, one at a time, to a file
-bool Entry::write_act()
-{
-
-}
-// function called in a loop to write expenditures, one at a time, to a file
-bool Entry::write_ex()
-{
-
-}
-// writes a whole activity to a file by calling the above helper functions
-bool Entry::write_to_file()
-{
-
-}
 
 
 
