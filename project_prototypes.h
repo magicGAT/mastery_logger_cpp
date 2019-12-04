@@ -1,5 +1,9 @@
 
 #include <iostream>
+#include <ctime>
+#include <chrono>
+#include <fstream>
+#include <vector>
 #include <string>
 
 // POSSIBLE STRUCTS
@@ -47,7 +51,7 @@ struct User
 		string preferred_name;
 		string fav_act;
 		bool sex;
-		// directory of associated entries (probably entry names, probably an STL <vector>)
+		vector<string> entries;
 }
 
 
@@ -61,15 +65,19 @@ string generate_dphase(int)
 // searches a folder for a filename which contain user info used by the greeter() function 
 void find_profile(string);
 
-// creates a new profile to be saved as a formated .txt file
-User create_profile();
+bool save_new_profile(User);
 
 // equates the actual users profile with the user object used by the program
 User load_profile(string);
 
-bool save_profile(User);
-
 User load_guest();
+
+void display_profile(User);
+
+void display_profile(string, string, string, bool)
+
+// creates a new profile to be saved as a formated .txt file
+User create_profile();
 
 // greets user. first prompts for a profile name or to create a new profile
 // (male female,
