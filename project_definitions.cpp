@@ -5,17 +5,106 @@
 
 using namespace std;
 
-
-// fuction called in a loop to write activities, one at a time, to a file
-Activity write_act(Entry parent)
+string day_o_year()
 {
+	int month, day, year;
+	string result;
 
+	time_t t = time(0);
+	tm* now = localtime(&t);
+
+	month = now -> tm_mon + 1;
+	day = now -> tm_mday;
+	year = 1900 + now -> tm_year;
+
+	result = to_string(month) + "/" + to_string(day) + "/" + to_string(year);
+
+	return result;
 }
-// function called in a loop to write expenditures, one at a time, to a file
-Expenditure write_ex(Entry parent)
+
+///////--ENTRY MEMBER FUNCTIONS--///////
+// Constructor
+Entry::Entry(int a_count, int e_count)
 {
+	// initialization of basic members
+	date = day_o_year();
+	act_count = a_count;
+	ex_count = e_count;
 
+	// allocation of array space
+	act_arr = new Activity[act_count];
+	ex_arr = new Expenditure[ex_count];
 }
+
+Entry::~Entry()
+{
+	// prevents memory leaks when object falls out of scope and is destroyed
+	delete act_count;
+	delete ex_count;
+}
+// fuction called in a loop to write activities, one at a time, to the object's corresponding array
+void write_act(vector<string> &names, int position)
+{
+	float hours;
+	Activity * scope;
+
+	cout << names[position] << endl;
+	cout << "How many hours did you spend on this activity: "
+	cin >> hours;
+
+	scope = act_arr[position];
+	scope -> a_name = names[position];
+	scope -> time = hours; 
+}
+// function called in a loop to write expenditures, one at a time, to the object's corresponding array
+void write_ex(vector<string> &names, int position)
+{
+	float e_cost;
+	Expenditure * scope;
+
+	cout << names[position] << endl;
+	cout << "How much did you spend on this: " << endl;
+	cin >> e_cost;
+
+	scope = ex_arr[position];
+	scope -> e_name = names[position];
+	scope -> cost = e_cost; 
+}
+// writes an entire entry to a file
+bool write_to_file()
+{
+	Activity * act_plate;
+	Expenditure * ex_plate;
+	string file_name = date + ".txt";
+
+	ofstream output_file(file_name);
+
+	// add protections here for improper file operations
+
+	output_file << date << ",";
+	output_file << act_count << ",";
+	
+	for (int i = 0; i < act_count; i++)
+	{
+		act_plate = act_arr[i];
+
+		output_file << act_plate -> a_name << ",";
+		output_file << act_plate -> time << ",";
+	}
+
+	output_file << ex_count << ",";
+
+	for (int i = 0; i < ex_count; i++)
+	{
+		ex_plate = ex_arr[i]
+
+		output_file << ex_plate -> e_name << ",";
+		output_file << ex_plate -> price << ",";
+	}
+	return true;
+}
+///////----///////
+
 
 Entry generate_entry(User subject)
 {
@@ -23,7 +112,8 @@ Entry generate_entry(User subject)
 	vector<string> expenditures;
 
 	bool gate_0 = false, gate_1 = false;
-	char choice_0 = 'g', choice_1 = 'y' , choice_2 = 'g', choice_3 = 'y', choice_4 = 'y', choice_5 = 'g', choice_6;
+	char choice_0 = 'g', choice_1 = 'y' , choice_2 = 'g', choice_3 = 'y', choice_4 = 'y', choice_5 = 'g', 
+		 choice_6, choice_7 = 'g';
 
 	cout << "Now we will write an entry for today's activities and expenditures" << endl;
 	
@@ -76,7 +166,7 @@ Entry generate_entry(User subject)
 				cin >> choice_3
 			}
 		}
-
+	}
 	else
 	{
 		cout << "Ok, lets list some expenditures" << endl;
@@ -123,17 +213,42 @@ Entry generate_entry(User subject)
 
 	cout << "Ok! You have recorded " << activity.size() << " activities and ";
 	cout << expenditures.size() << " expenditures!" << endl;
+	// insert option to start over here (same with the profile creation) (easier when things are more modular, simply quit and re-call the function)
+	// consider saving activity.size() to a variable to avoid the 6 function calls we make here
+	// Entry object is instantiated with the adt arrays are filled.
 
+	Entry this_entry(activity.size(), expenditures.size());
 
-		// insert option to start over here (same with the profile creation) (easier when things are more modular, simply quit and re-call the function)
-
-
+	// write activities loop
+	for (int i = 0, i < activity.size(); i++)
+	{
+		this_entry.write_act(activity, i)
 	}
-}
-// writes a whole activity to a file by calling the above helper functions
-bool write_to_file(Entry author)
-{
 
+	// write expenditures loop
+	for (int i = 0; i < expenditures.size(); i++)
+	{
+		this_entry.write_ex(expenditures, i);
+	}
+
+	cout << "Entry Generated and Filled!" << endl;
+
+	// cout a display/summary of the entry, the same one used to read old entries
+
+	while (choice_7 != 'y' && choice_7 != 'n') 
+	{
+		cout << "Would you like to save this entry? ('y'/'n')" << endl;
+		cin >> choice_7
+	}
+
+	if (choice_7 == 'y')
+	{
+		bool success;
+		
+		success = this_entry.write_to_file();
+
+		(success == true ? cout << "Successfully Logged!" : cout << "Error. Log Unsuccessful...");
+	}
 }
 
 int time_o_day()
