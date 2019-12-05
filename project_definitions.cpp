@@ -39,25 +39,26 @@ Entry::Entry(int a_count, int e_count)
 Entry::~Entry()
 {
 	// prevents memory leaks when object falls out of scope and is destroyed
-	delete act_count;
-	delete ex_count;
+	delete act_arr;
+	delete ex_arr;
 }
 // fuction called in a loop to write activities, one at a time, to the object's corresponding array
-void write_act(vector<string> &names, int position)
+void Entry::write_act(vector<string> &names, int position)
 {
 	float hours;
 	Activity * scope;
 
 	cout << names[position] << endl;
-	cout << "How many hours did you spend on this activity: "
+	cout << "How many hours did you spend on this activity: ";
 	cin >> hours;
 
-	scope = act_arr[position];
+	scope = &act_arr[position];
 	scope -> a_name = names[position];
-	scope -> time = hours; 
+	scope -> time = hours;
 }
 // function called in a loop to write expenditures, one at a time, to the object's corresponding array
-void write_ex(vector<string> &names, int position)
+// function called in a loop to write expenditures, one at a time, to the object's corresponding array
+void Entry::write_ex(vector<string> &names, int position)
 {
 	float e_cost;
 	Expenditure * scope;
@@ -66,12 +67,12 @@ void write_ex(vector<string> &names, int position)
 	cout << "How much did you spend on this: " << endl;
 	cin >> e_cost;
 
-	scope = ex_arr[position];
+	scope = &ex_arr[position];
 	scope -> e_name = names[position];
-	scope -> cost = e_cost; 
+	scope -> price = e_cost;
 }
 // writes an entire entry to a file
-bool write_to_file()
+bool Entry::write_to_file()
 {
 	Activity * act_plate;
 	Expenditure * ex_plate;
@@ -83,10 +84,10 @@ bool write_to_file()
 
 	output_file << date << ",";
 	output_file << act_count << ",";
-	
+
 	for (int i = 0; i < act_count; i++)
 	{
-		act_plate = act_arr[i];
+		act_plate = &act_arr[i];
 
 		output_file << act_plate -> a_name << ",";
 		output_file << act_plate -> time << ",";
@@ -96,36 +97,39 @@ bool write_to_file()
 
 	for (int i = 0; i < ex_count; i++)
 	{
-		ex_plate = ex_arr[i]
+		ex_plate = &ex_arr[i];
 
 		output_file << ex_plate -> e_name << ",";
 		output_file << ex_plate -> price << ",";
 	}
+
+	output_file.close();
+
 	return true;
 }
 ///////----///////
 
-
-Entry generate_entry(User subject)
+void generate_entry(User& subject)
 {
 	vector<string> activity;
 	vector<string> expenditures;
 
-	bool gate_0 = false, gate_1 = false;
-	char choice_0 = 'g', choice_1 = 'y' , choice_2 = 'g', choice_3 = 'y', choice_4 = 'y', choice_5 = 'g', 
-		 choice_6, choice_7 = 'g';
+	bool gate_0 = false;
+	char choice_0 = 'g', choice_1 = 'y' , choice_2 = 'g', choice_3 = 'y', choice_4 = 'y', choice_5 = 'g',
+		 choice_6 = 'y', choice_7 = 'g';
 
 	cout << "Now we will write an entry for today's activities and expenditures" << endl;
-	
+
 	while (choice_0 != 'a' && choice_0 != 'e')
 	{
 		cout << "Which would you like to do first? ('a'/'e')" << endl;
 		cin >> choice_0;
+		cin.ignore();
 	}
 
-	(choice_0 == 'a' ? gate_0 = true : gate_0 = false)
+	(choice_0 == 'a' ? gate_0 = true : gate_0 = false);
 
-	if (choice_0 == true)
+	if (gate_0 == true)
 	{
 		int counter_0 = 1;
 		string name_box0;
@@ -135,13 +139,14 @@ Entry generate_entry(User subject)
 		while (choice_1 != 'n')
 		{
 			 cout << "Please name one of your activities today (" << counter_0 << "): ";
-			 
+
 			 getline(cin, name_box0);
-			 activity.push_back(name_box0)
+			 activity.push_back(name_box0);
 			 counter_0++;
 
 			 cout << endl << endl << "Do you have more activites to report? ('n' to quit)" << endl;
-			 cin >> choice_1
+			 cin >> choice_1;
+			 cin.ignore();
 		}
 
 		while (choice_2 != 'y' && choice_2 != 'n')
@@ -153,17 +158,20 @@ Entry generate_entry(User subject)
 
 		if (choice_2 == 'y')
 		{
-			counter_1 = 1;
-			string name_box1; 
-			
+			int counter_1 = 1;
+			string name_box1;
+
 			while (choice_3 != 'n')
 			{
 				cout << "Please name an expenditure (" << counter_1 << "): ";
+
 				getline(cin, name_box1);
+				expenditures.push_back(name_box1);
 				counter_1++;
 
+
 				cout << endl << endl << "Do you have more expenditures to record? ('n' to quit)" << endl;
-				cin >> choice_3
+				cin >> choice_3;
 			}
 		}
 	}
@@ -171,9 +179,9 @@ Entry generate_entry(User subject)
 	{
 		cout << "Ok, lets list some expenditures" << endl;
 
-		counter_2 = 1;
-		string name_box2; 
-			
+		int counter_2 = 1;
+		string name_box2;
+
 		while (choice_4 != 'n')
 		{
 			cout << "Please name an expenditure (" << counter_2 << "): ";
@@ -184,11 +192,12 @@ Entry generate_entry(User subject)
 			cin >> choice_4;
 			cin.ignore();
 		}
-		
+
 		while (choice_5 != 'y' && choice_5 != 'n')
 		{
 			cout << "Now that we have a list of expenditures, would you like to record some activities? ('y'/'n')" << endl;
 			cin >> choice_5;
+			cin.ignore();
 		}
 
 		if (choice_5 == 'y')
@@ -199,13 +208,13 @@ Entry generate_entry(User subject)
 			while (choice_6 != 'n')
 			{
 				cout << "Please name one of your activities today (" << counter_3 << "): ";
-			 
+
 				getline(cin, name_box3);
-				activity.push_back(name_box3)
+				activity.push_back(name_box3);
 				counter_3++;
 
 				cout << endl << endl << "Do you have more activites to report? ('n' to quit)" << endl;
-				cin >> choice_6
+				cin >> choice_6;
 				cin.ignore();
 			}
 		}
@@ -220,9 +229,9 @@ Entry generate_entry(User subject)
 	Entry this_entry(activity.size(), expenditures.size());
 
 	// write activities loop
-	for (int i = 0, i < activity.size(); i++)
+	for (int i = 0; i < activity.size(); i++)
 	{
-		this_entry.write_act(activity, i)
+		this_entry.write_act(activity, i);
 	}
 
 	// write expenditures loop
@@ -235,20 +244,37 @@ Entry generate_entry(User subject)
 
 	// cout a display/summary of the entry, the same one used to read old entries
 
-	while (choice_7 != 'y' && choice_7 != 'n') 
+	while (choice_7 != 'y' && choice_7 != 'n')
 	{
 		cout << "Would you like to save this entry? ('y'/'n')" << endl;
-		cin >> choice_7
+		cin >> choice_7;
 	}
 
 	if (choice_7 == 'y')
 	{
-		bool success;
-		
-		success = this_entry.write_to_file();
+		bool success0, success1;
 
-		(success == true ? cout << "Successfully Logged!" : cout << "Error. Log Unsuccessful...");
+		success0 = this_entry.write_to_file();
+
+		(success0 == true ? cout << "Successfully Logged!" : cout << "Error. Log Unsuccessful...");
+
+		success1 = subject.update_userf(this_entry);
+
+		(success1 == true ? cout << "Entry Connected to User!" : cout << "Entry Not Connected to User!");
 	}
+}
+
+bool User::update_userf(Entry update_subject)
+{
+	string file_name = profile_name + ".txt";
+	fstream to_update;
+	string addition = update_subject.date;
+
+	to_update.open(file_name, ios::app);
+
+	to_update << endl << addition;
+	to_update.close();
+	return true;
 }
 
 int time_o_day()

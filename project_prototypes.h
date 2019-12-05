@@ -19,7 +19,7 @@ struct Activity
 	public:
 		string a_name;
 		float time;
-}
+};
 
 struct Expenditure
 {
@@ -28,26 +28,26 @@ struct Expenditure
 		float price;
 		// what if we added a metric for quantity? is it better to have general categories
 		// so that we increase use across goods AND services :dunno:
-}
+};
 
 // I think we need to ask for a list of activites and expenditures BEFORE generating the Entry 
 // so that we can fill the two count variables 
 class Entry
 {
 	private:
-		Entry(); // constructor
-		~Entry() // destructor
 		int act_count; //number of activities for generating array MUST BE DETERMINED BEFORE INSTANTIATION
 		int ex_count; //number of expenditures for
-		
+
 	public:
-		string date; // functions like a title 
+		Entry(int, int); // constructor
+		~Entry(); // destructor
+		string date; // functions like a title
 		Activity * act_arr; // pointer to an array of activities (using a pointer because we can gurantee)
-		Expendure * ex_arr; // pointer to an array of expenditures (that any two arrays will be the same size) 
+		Expenditure * ex_arr; // pointer to an array of expenditures (that any two arrays will be the same size)
 		void write_act(vector<string>&, int);
 		void write_ex(vector<string>&, int);
 		bool write_to_file();
-}
+};
 
 // consider implementing this a static class object to avoid confusion
 // when using the user object in and around many, many function calls
@@ -60,7 +60,8 @@ struct User
 		string fav_act;
 		bool sex;
 		vector<string> entries;
-}
+		bool update_userf(Entry);
+};
 
 ///////--ENTRY MEMBER FUNCTIONS--///////
 // Constructor
@@ -86,6 +87,8 @@ Entry::~Entry()
 ///////--GENERAL FUNCTION PROTOTYPES--///////
 
 string day_o_year;
+
+void generate_entry(User&)
 
 // helper function for greeter which returns the hour of the day
 int time_o_day();
