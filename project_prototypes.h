@@ -1,3 +1,14 @@
+/*
+ * prototypes.h
+ *
+ *  Created on: Dec 5, 2019
+ *      Author: gregorytaylor
+ */
+
+
+
+#ifndef PROTOTYPES_H_
+#define PROTOTYPES_H_
 
 #include <iostream>
 #include <ctime>
@@ -6,12 +17,15 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
+
 // POSSIBLE STRUCTS
 // ideas: make an entry an array of structs, then the user can determine how many activities
 // and expenditures they will include per journal entry. They we will need "header" like object
 // which contains the file name
 
-// Possible key table to store filenames in a system similar to the database design outline in 
+// Possible key table to store filenames in a system similar to the database design outline in
 // adv programming and algo class
 
 struct Activity
@@ -30,8 +44,8 @@ struct Expenditure
 		// so that we increase use across goods AND services :dunno:
 };
 
-// I think we need to ask for a list of activites and expenditures BEFORE generating the Entry 
-// so that we can fill the two count variables 
+// I think we need to ask for a list of activites and expenditures BEFORE generating the Entry
+// so that we can fill the two count variables
 class Entry
 {
 	private:
@@ -63,52 +77,30 @@ struct User
 		bool update_userf(Entry);
 };
 
-///////--ENTRY MEMBER FUNCTIONS--///////
-// Constructor
-Entry::Entry(int a_count, int e_count)
-{
-	// initialization of basic members
-	date = day_o_year();
-	act_count = a_count;
-	ex_count = e_count;
-
-	// allocation of array space
-	act_arr = new Activity[act_count];
-	ex_arr = new Expenditure[ex_count];
-}
-
-Entry::~Entry()
-{
-	// prevents memory leaks when object falls out of scope and is destroyed
-	delete act_count;
-	delete ex_count;
-}
-
 ///////--GENERAL FUNCTION PROTOTYPES--///////
 
-string day_o_year;
+string day_o_year();
 
-void generate_entry(User&)
+void generate_entry(User&);
 
 // helper function for greeter which returns the hour of the day
 int time_o_day();
 
-string generate_dphase(int)
+string generate_dphase(int);
 ///////----///////
 
 
 ///////--LOG WRITING && READING--///////
 
-
-Entry generate_entry(User);
+void generate_entry(User&);
 
 
 ///////----///////
 
 
 ///////--PROFILE FUNCTIONS--///////
-// searches a folder for a filename which contain user info used by the greeter() function 
-void find_profile(string);
+// searches a folder for a filename which contain user info used by the greeter() function
+bool find_profile(string);
 
 bool save_new_profile(User);
 
@@ -119,7 +111,7 @@ User load_guest();
 
 void display_profile(User);
 
-void display_profile(string, string, string, bool)
+void display_profile(string, string, string, bool);
 
 // creates a new profile to be saved as a formated .txt file
 User create_profile();
@@ -131,6 +123,13 @@ User greeter();
 void display_menu();
 
 ///////----///////
+
+
+
+
+
+
+#endif /* PROTOTYPES_H_ */
 
 
 

@@ -1,3 +1,11 @@
+/*
+ * definitions.cpp
+ *
+ *  Created on: Dec 5, 2019
+ *      Author: gregorytaylor
+ */
+
+#include "prototypes.h"
 #include <iostream>
 #include <ctime>
 #include <chrono>
@@ -42,7 +50,7 @@ Entry::~Entry()
 	delete act_arr;
 	delete ex_arr;
 }
-// fuction called in a loop to write activities, one at a time, to the object's corresponding array
+// function called in a loop to write activities, one at a time, to the object's corresponding array
 void Entry::write_act(vector<string> &names, int position)
 {
 	float hours;
@@ -74,23 +82,34 @@ void Entry::write_ex(vector<string> &names, int position)
 // writes an entire entry to a file
 bool Entry::write_to_file()
 {
+	string test = "12-05-31"; // wtf!!!!!!!!! LOL CHANGE THE DATE FORMAT SO ITS DOESNT RESEMBLE A FILE PATH
 	Activity * act_plate;
 	Expenditure * ex_plate;
-	string file_name = date + ".txt";
+	string file_name = test + ".txt"; //+ "a.txt"; HAS SOMETHING TO DO WITH DATE, DOESNT WANT TO SAVE IT AS THAT
+	cout << file_name << endl; // TEST
 
-	ofstream output_file(file_name);
+	ofstream output_file;
+
+	output_file.open(file_name);
+
+	if (output_file.fail())
+		cerr << "Its not opening";
 
 	// add protections here for improper file operations
 
 	output_file << date << ",";
+	cout << date << endl; //TEST
 	output_file << act_count << ",";
+	cout << act_count << endl; // TEST
 
 	for (int i = 0; i < act_count; i++)
 	{
 		act_plate = &act_arr[i];
 
 		output_file << act_plate -> a_name << ",";
+		cout << act_plate -> a_name << ",";
 		output_file << act_plate -> time << ",";
+		cout << act_plate -> time << ",";
 	}
 
 	output_file << ex_count << ",";
@@ -100,7 +119,9 @@ bool Entry::write_to_file()
 		ex_plate = &ex_arr[i];
 
 		output_file << ex_plate -> e_name << ",";
+		cout << ex_plate -> e_name << ",";
 		output_file << ex_plate -> price << ",";
+		cout << ex_plate -> price << ",";
 	}
 
 	output_file.close();
@@ -108,6 +129,19 @@ bool Entry::write_to_file()
 	return true;
 }
 ///////----///////
+
+bool User::update_userf(Entry update_subject)
+{
+	string file_name = profile_name + ".txt";
+	fstream to_update;
+	string addition = update_subject.date;
+
+	to_update.open(file_name, ios::app);
+
+	to_update << endl << addition;
+	to_update.close();
+	return true;
+}
 
 void generate_entry(User& subject)
 {
@@ -254,28 +288,17 @@ void generate_entry(User& subject)
 	{
 		bool success0, success1;
 
-		success0 = this_entry.write_to_file();
+		success0 = this_entry.write_to_file(); // problem here
 
-		(success0 == true ? cout << "Successfully Logged!" : cout << "Error. Log Unsuccessful...");
+		(success0 == true ? cout << "Successfully Logged!" : cout << "Error. Log Unsuccessful..."); // good
 
-		success1 = subject.update_userf(this_entry);
+		success1 = subject.update_userf(this_entry); //good
 
-		(success1 == true ? cout << "Entry Connected to User!" : cout << "Entry Not Connected to User!");
+		(success1 == true ? cout << "Entry Connected to User!" : cout << "Entry Not Connected to User!"); //problem here
 	}
 }
 
-bool User::update_userf(Entry update_subject)
-{
-	string file_name = profile_name + ".txt";
-	fstream to_update;
-	string addition = update_subject.date;
 
-	to_update.open(file_name, ios::app);
-
-	to_update << endl << addition;
-	to_update.close();
-	return true;
-}
 
 int time_o_day()
 {
@@ -386,7 +409,7 @@ void display_profile(User subject)
 	cout << "Biological Sex: ";
 	(subject.sex == 1 ? cout << "Male" : cout << "Female");
 	cout << endl;
-	cout << "Number of Associated Log Entries: " << subject.entries.size() << endl;
+	cout << "Number of Associated Log Entries: " << subject.entries.size() << endl << endl;
 }
 
 void display_profile(string u_name, string p_name, string fav, bool s)
@@ -397,7 +420,7 @@ void display_profile(string u_name, string p_name, string fav, bool s)
 	cout << "Preferred Name: " << p_name << endl;
 	cout << "Favorite Activity: " << fav << endl;
 	cout << "Biological Sex: ";
-	(s == 1 ? cout << "Male" : cout << "Female");
+	(s == 1 ? cout << "Male" : cout << "Female") << endl;
 	cout << endl;
 }
 
@@ -471,7 +494,7 @@ User create_profile()
 		}
 		else
 		{
-			continue;
+			break;
 		}
 
 	}
@@ -499,71 +522,75 @@ User greeter()
 	char flag = 'g';
 
 	// determination of membership status
-	while(flag != 'n' || !flag != 'y')
+	while (flag != 'n' && flag != 'y')
 	{
 		cout << "Are you already a member? (y/n)" << endl;
 		cin >> flag;
-	} 
+	}
 
 	(flag == 'y' ? gate = true : gate = false);
 
 	// if user indicated they are a user, they are prompted to load their profile
-	if (gate = true)
+	if (gate == true)
 	{
 		bool gate_2 = false;
-		while (gate_2 = false)
+
+		while (gate_2 == false)
 		{
 			string u_name, u_file;
-		
+
 			cout << "Please enter your username:" << endl;
 			cin >> u_name;
 			u_file = u_name + ".txt";
+			cin.ignore();
 
 			if (find_profile(u_name))
+			{
 				cout << "Profile Found!" << endl;
 				subject = load_profile(u_name);
 				gate_2 = true;
-
-			else 
+			}
+			else
 			{
 				char flag;
 				cout << "Profile not found..." << endl;
 				cout << "Would you like to try again? (y/n)" << endl;
 				cin >> flag;
 
-				(flag == y ? continue : gate_2 = true)
-			} 
+				(flag == 'y' ? gate_2 = false : gate_2 = true);
+			}
 		}
+	}
 
 		// if user indicates they are not a member, they are prompted to
 		// either create a profile or continue as a guest
-		if (gate = false)
+	if (gate == false)
+	{
+		char flag_2 = 'g';
+
+		while (flag_2 != 'y' && flag_2 != 'n')
 		{
-			char flag_2 = 'g';
+			cout << "Would you like to create a MASTERY FAMILY profile? (y/n)" << endl;
+			cin >> flag_2;
+			cin.ignore();
+		}
 
-			while (flag_2 != 'y' && flag_2 != 'n')
-			{
-				cout << "Would you like to create a MASTERY FAMILY profile? (y/n)" << endl;
-				cin >> flag_2;
-			}
+		if (flag_2 == 'y')
+		{
+			cout << "Initiating profile creator..." << endl;
+			subject = create_profile();
+		}
 
-			if (flag_2 == 'y')
-			{
-				cout << "Initiating profile creator..." << endl;
-				subject = create_profile();
-			}
-
-			if (flag_2 == 'n')
-			{
-				cout << "Generating profile: 'guest'..." << endl;
-				subject = load_guest();
-			}
+		if (flag_2 == 'n')
+		{
+			cout << "Generating profile: 'guest'..." << endl;
+			subject = load_guest();
 		}
 	}
 
 	string final_name;
 
-	final_name = subject.preferred_name
+	final_name = subject.preferred_name;
 
 	// determination of time of day
 	int hora;
@@ -587,7 +614,6 @@ User greeter()
 	cout << "Good " << d_phase << ", " << final_name << "!" << endl;
 	return subject;
 }
-
 
 
 
