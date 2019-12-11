@@ -1,11 +1,3 @@
-/*
- * prototypes.h
- *
- *  Created on: Dec 5, 2019
- *      Author: gregorytaylor
- */
-
-
 
 #ifndef PROTOTYPES_H_
 #define PROTOTYPES_H_
@@ -43,7 +35,20 @@ struct Expenditure
 		// what if we added a metric for quantity? is it better to have general categories
 		// so that we increase use across goods AND services :dunno:
 };
-
+// consider implementing this a static class object to avoid confusion
+// when using the user object in and around many, many function calls
+class User
+{
+	private:
+	public:
+		string profile_name;
+		string preferred_name;
+		string fav_act;
+		bool sex;
+		vector<string> entries;
+		void browse_entries();
+		Entry read_entry();
+};
 // I think we need to ask for a list of activites and expenditures BEFORE generating the Entry
 // so that we can fill the two count variables
 class Entry
@@ -61,21 +66,9 @@ class Entry
 		void write_act(vector<string>&, int);
 		void write_ex(vector<string>&, int);
 		bool write_to_file();
+		bool update_userf(User); // I dont like that this is a member of the Entry class rather than the User struct
 };
 
-// consider implementing this a static class object to avoid confusion
-// when using the user object in and around many, many function calls
-struct User
-{
-	private:
-	public:
-		string profile_name;
-		string preferred_name;
-		string fav_act;
-		bool sex;
-		vector<string> entries;
-		bool update_userf(Entry);
-};
 
 ///////--GENERAL FUNCTION PROTOTYPES--///////
 
@@ -93,6 +86,8 @@ string generate_dphase(int);
 ///////--LOG WRITING && READING--///////
 
 void generate_entry(User&);
+
+
 
 
 ///////----///////

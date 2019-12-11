@@ -1,9 +1,3 @@
-/*
- * definitions.cpp
- *
- *  Created on: Dec 5, 2019
- *      Author: gregorytaylor
- */
 
 #include "prototypes.h"
 #include <iostream>
@@ -25,7 +19,7 @@ string day_o_year()
 	day = now -> tm_mday;
 	year = 1900 + now -> tm_year;
 
-	result = to_string(month) + "/" + to_string(day) + "/" + to_string(year);
+	result = to_string(month) + "-" + to_string(day) + "-" + to_string(year);
 
 	return result;
 }
@@ -82,15 +76,11 @@ void Entry::write_ex(vector<string> &names, int position)
 // writes an entire entry to a file
 bool Entry::write_to_file()
 {
-	string test = "12-05-31"; // wtf!!!!!!!!! LOL CHANGE THE DATE FORMAT SO ITS DOESNT RESEMBLE A FILE PATH
 	Activity * act_plate;
 	Expenditure * ex_plate;
-	string file_name = test + ".txt"; //+ "a.txt"; HAS SOMETHING TO DO WITH DATE, DOESNT WANT TO SAVE IT AS THAT
-	cout << file_name << endl; // TEST
+	string file_name = date + ".txt";
 
-	ofstream output_file;
-
-	output_file.open(file_name);
+	ofstream output_file(file_name);
 
 	if (output_file.fail())
 		cerr << "Its not opening";
@@ -98,18 +88,14 @@ bool Entry::write_to_file()
 	// add protections here for improper file operations
 
 	output_file << date << ",";
-	cout << date << endl; //TEST
 	output_file << act_count << ",";
-	cout << act_count << endl; // TEST
 
 	for (int i = 0; i < act_count; i++)
 	{
 		act_plate = &act_arr[i];
 
 		output_file << act_plate -> a_name << ",";
-		cout << act_plate -> a_name << ",";
 		output_file << act_plate -> time << ",";
-		cout << act_plate -> time << ",";
 	}
 
 	output_file << ex_count << ",";
@@ -119,17 +105,29 @@ bool Entry::write_to_file()
 		ex_plate = &ex_arr[i];
 
 		output_file << ex_plate -> e_name << ",";
-		cout << ex_plate -> e_name << ",";
 		output_file << ex_plate -> price << ",";
-		cout << ex_plate -> price << ",";
 	}
 
 	output_file.close();
 
 	return true;
 }
-///////----///////
 
+bool Entry::update_userf(User sub)
+{
+	string file_name = sub.profile_name + ".txt";
+	fstream to_update;
+	string addition = date;
+
+	to_update.open(file_name, ios::app);
+
+	to_update << endl << addition;
+	to_update.close();
+
+	return true;
+}
+///////----///////
+/*
 bool User::update_userf(Entry update_subject)
 {
 	string file_name = profile_name + ".txt";
@@ -140,9 +138,10 @@ bool User::update_userf(Entry update_subject)
 
 	to_update << endl << addition;
 	to_update.close();
+
 	return true;
 }
-
+*/
 void generate_entry(User& subject)
 {
 	vector<string> activity;
@@ -288,14 +287,16 @@ void generate_entry(User& subject)
 	{
 		bool success0, success1;
 
-		success0 = this_entry.write_to_file(); // problem here
+		success0 = this_entry.write_to_file();
 
-		(success0 == true ? cout << "Successfully Logged!" : cout << "Error. Log Unsuccessful..."); // good
+		(success0 == true ? cout << "Successfully Logged!" << endl : cout << "Error. Log Unsuccessful..." << endl); // good
 
-		success1 = subject.update_userf(this_entry); //good
+		success1 = this_entry.update_userf(subject);
 
 		(success1 == true ? cout << "Entry Connected to User!" : cout << "Entry Not Connected to User!"); //problem here
 	}
+
+	return;
 }
 
 
