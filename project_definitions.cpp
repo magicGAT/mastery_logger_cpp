@@ -1,9 +1,11 @@
 
-#include "prototypes.h"
+#include "log_users.h"
+
 #include <iostream>
 #include <ctime>
 #include <chrono>
 #include <fstream>
+
 
 using namespace std;
 
@@ -41,8 +43,8 @@ Entry::Entry(int a_count, int e_count)
 Entry::~Entry()
 {
 	// prevents memory leaks when object falls out of scope and is destroyed
-	delete act_arr;
-	delete ex_arr;
+	delete [] act_arr;
+	delete [] ex_arr;
 }
 // function called in a loop to write activities, one at a time, to the object's corresponding array
 void Entry::write_act(vector<string> &names, int position)
@@ -206,7 +208,7 @@ void generate_entry(User& subject)
 				cout << endl << endl << "Do you have more expenditures to record? ('n' to quit)" << endl;
 				cin >> choice_3;
 			}
-		}
+		 }
 	}
 	else
 	{
@@ -246,7 +248,7 @@ void generate_entry(User& subject)
 				activity.push_back(name_box3);
 				counter_3++;
 
-				cout << endl << endl << "Do you have more activites to report? ('n' to quit)" << endl;
+				cout << endl << endl << "Do you have more activities to report? ('n' to quit)" << endl;
 				cin >> choice_6;
 				cin.ignore();
 			}
@@ -289,17 +291,33 @@ void generate_entry(User& subject)
 
 		success0 = this_entry.write_to_file();
 
-		(success0 == true ? cout << "Successfully Logged!" << endl : cout << "Error. Log Unsuccessful..." << endl); // good
+		(success0 == true ? cout << "Successfully Logged!" << endl : cout << "Error. Log Unsuccessful..." << endl);
 
 		success1 = this_entry.update_userf(subject);
 
-		(success1 == true ? cout << "Entry Connected to User!" : cout << "Entry Not Connected to User!"); //problem here
+		(success1 == true ? cout << "Entry Connected to User!" : cout << "Entry Not Connected to User!");
+
+		subject = load_profile(subject.profile_name);
 	}
 
-	return;
+}
+
+void browse_entries()
+{
+
+}
+
+Entry read_entry()
+{
+
 }
 
 
+
+void display_entry()
+{
+
+}
 
 int time_o_day()
 {
