@@ -36,8 +36,14 @@ Entry::Entry(int a_count, int e_count)
 	ex_count = e_count;
 
 	// allocation of array space
-	act_arr = new Activity[act_count];
-	ex_arr = new Expenditure[ex_count];
+	if (a_count != 0)
+	{
+		act_arr = new Activity[act_count];
+	}
+	if (e_count != 0)
+	{
+		ex_arr = new Expenditure[ex_count];
+	}
 }
 
 Entry::~Entry()
@@ -89,8 +95,9 @@ bool Entry::write_to_file()
 
 	// add protections here for improper file operations
 
-	output_file << date << ",";
 	output_file << act_count << ",";
+	output_file << ex_count << ",";
+	output_file << date << ",";
 
 	for (int i = 0; i < act_count; i++)
 	{
@@ -100,7 +107,7 @@ bool Entry::write_to_file()
 		output_file << act_plate -> time << ",";
 	}
 
-	output_file << ex_count << ",";
+
 
 	for (int i = 0; i < ex_count; i++)
 	{
@@ -302,21 +309,158 @@ void generate_entry(User& subject)
 
 }
 
-void browse_entries()
+void User::browse_entries()
 {
+	int counter = 1;
+	char gate = 'g';
 
+	cout << "Here are all logs associated with your account (labelled by date):" << endl << endl;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+	}
+
+	while (gate != 'y' && gate != 'n')
+	{
+		cout << "Would you like to examine one of these entries in detail? ('y'/'n')" << endl;
+		cin >> gate;
+		cin.ignore();
+	}
+
+	if (gate == 'y')
+	{
+		int entry_choice = 0;
+		string entry_title;
+
+		while (entry_choice < 1 || entry_choice > entries.size())
+		{
+			cout << "Ok!" << endl;
+			cout << "Please enter the entry number you would like to see: ";
+			cin >> entry_choice;
+			cin.ignore();
+		}
+
+		entry_choice -= 1;
+		entry_title = entries[entry_choice] + ".txt";
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+	 	ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+		cout << a_count << " " << e_count << endl; // if we pass (1,0) as arguements, it fails (1,1) passes
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count); // THE PROBLEM IS WITH THIS FUNCTION =(
+/*
+		Activity * tester = &this_entry.act_arr[0]; //testing
+		cout << "Date: " << this_entry.date << endl;
+		cout << "A Count: " << this_entry.act_count << endl; // RESULT: date and time, a_count are correct.
+		cout << "E Count: " << this_entry.ex_count << endl;  // E count is wrong, activity is blank
+		cout << "Activity: " << tester -> a_name << endl;    // exit code -1
+		cout << "Time: " << tester -> time << endl;
+
+		//cout << "TEST2: " << tester -> a_name << endl; // testing
+		//cout << "Is something wrong" << endl; //testing
+		// this_entry.display_entry(); */
+	}
 }
 
-Entry read_entry()
+Entry open_entry(string entry_title, int act, int exp)
 {
+	Entry bucket(act, exp); // problem starts here // IS THE PROBLEM THAT THIS IS A USER FUNCTION???
+	/*string a, e, temp;
+	int a_count, e_count;
+	Activity * act_plate;
+	Expenditure * exp_plate;
 
+	ifstream input_file(entry_title);
+
+	getline(input_file, a,',');
+	getline(input_file, e,',');
+
+	a_count = stoi(a);
+	e_count = stoi(e);
+
+	a_count -= 1;
+	e_count -= 1;
+
+	getline(input_file, bucket.date,',');
+
+	while (a_count >= 0)
+	{
+		act_plate = &bucket.act_arr[a_count];
+		getline(input_file, act_plate -> a_name,',');
+		getline(input_file, temp, ',');
+		act_plate -> time = stoi(temp);
+		// cout << act_plate -> a_name << endl; // testing HERE ITS IN
+
+		a_count--;
+	}
+
+	while (e_count >= 0)
+	{
+		exp_plate = &bucket.ex_arr[e_count];
+		getline(input_file, exp_plate -> e_name,',');
+		getline(input_file, temp, ',');
+		exp_plate -> price = stof(temp);
+
+		e_count--;
+	}
+	act_plate = &bucket.act_arr[0]; // testing
+	cout << "TEST:" << act_plate->a_name << endl; //testing HERE ITS IN
+	*/
+	return bucket;
 }
 
-
-
-void display_entry()
+void Entry::display_entry()
 {
+	cout << "!!!--.ENTRY DETAILS.--!!!" << endl;
+	cout << "date: " << date << endl;
+	cout << "ACTIVITIES:" << endl;
 
+	if (act_count == 0)
+	{
+		cout << "\t NONE" << endl;
+	}
+	else
+	{
+		Activity * act_plate;
+		int counter0 = act_count - 1;
+
+		while (counter0 >= 0)
+		{
+			act_plate = &act_arr[counter0];
+			cout << "\tActivity: " << act_plate -> a_name << endl;
+			cout << "\tHours Spent: " << act_plate -> time << endl;
+		}
+	}
+
+	if (ex_count == 0)
+	{
+		return;
+	}
+	else
+	{
+		Expenditure * ex_plate;
+		int counter1 = ex_count -1;
+
+		while (counter1 >= 0)
+		{
+			ex_plate = &ex_arr[counter1];
+
+			cout << "EXPENDITURES:" << endl;
+			cout << "\tExpenditure: " << ex_plate -> e_name << endl;
+			cout << "\tCost: $" << ex_plate -> price << endl;
+		}
+	}
 }
 
 int time_o_day()
@@ -633,6 +777,7 @@ User greeter()
 	cout << "Good " << d_phase << ", " << final_name << "!" << endl;
 	return subject;
 }
+
 
 
 
