@@ -2,7 +2,7 @@
 #ifndef PROTOTYPES_H_
 #define PROTOTYPES_H_
 
-
+//include statements
 #include <iostream>
 #include <ctime>
 #include <chrono>
@@ -12,61 +12,61 @@
 
 using namespace std;
 
+// pre-declaration of ADTs
 class User;
 class Entry;
 struct Activity;
 struct Expenditure;
 
 
-// consider implementing this a static class object to avoid confusion
-// when using the user object in and around many, many function calls
-
+// USER CLASS: ADT representing a user's personal profile. Contain a username (for login),
+// a personal name (by which, the program refers to the user), a favorite activity (for
+// personalized messages from the program), sex (also for personalization), and a vector
+// which holds a list of the user's associated entries
 class User
 {
 	private:
 	public:
 		string profile_name;
 		string preferred_name;
-		string fav_act;
+		string fav_act; // CURRENTLY NOT BEING UTILIZED
 		bool sex;
 		vector<string> entries;
-		void browse_entries();
-		void display_entry();
-		// bool update_userf(Entry);
-
+		void browse_entries(); //displays associated entries to the user
 };
 
-// POSSIBLE STRUCTS
-// ideas: make an entry an array of structs, then the user can determine how many activities
-// and expenditures they will include per journal entry. They we will need "header" like object
-// which contains the file name
-
-// Possible key table to store filenames in a system similar to the database design outline in
-// adv programming and algo class
-
-
-// I think we need to ask for a list of activites and expenditures BEFORE generating the Entry
-// so that we can fill the two count variables
+// ENTRY CLASS: ADT which defines a log entry and contains all it data. It's constructor
+// takes two integers as arguments. These determine the size of two dynamically allocated
+// arrays. Those integers represent the number of activities and expenditures which the
+// log accounts for. And those arrays are groups of the structures `Activity` and `Expenditure`
+// respectively. The class also contains a date field (this functions as a title in addition
+// to recording chronology of the entry) and, two pointers to the dynamically allocated arrays
+// of the appropriate type. Because these arrays, the class requires a customized constructir,
+// destructor, copy constructor, and copy assignment operator.
 class Entry
 {
-	private:
-
-
 	public:
-		int act_count; //number of activities for generating array MUST BE DETERMINED BEFORE INSTANTIATION
-		int ex_count; //number of expenditures for
+		int act_count;
+		int ex_count;
+		string date;
+		Activity * act_arr;
+		Expenditure * ex_arr;
 		Entry(int, int); // constructor
 		~Entry(); // destructor
-		string date; // functions like a title
-		Activity * act_arr; // pointer to an array of activities
-		Expenditure * ex_arr; // pointer to an array of expenditures
-		void write_act(vector<string>&, int);
-		void write_ex(vector<string>&, int);
-		bool write_to_file();
-		bool update_userf(User); // I dont like that this is a member of the Entry class rather than the User struct
-		void display_entry();
+		Entry(const Entry &copy); // copy constructor
+		Entry& operator = (const Entry &to_copy); // copy assignment operator
+		void write_act(vector<string>&, int); // called by the function which generates new entries
+		void write_ex(vector<string>&, int); // called by the function which generates new entries
+		bool write_to_file(); // saves entries to a file in a format which can be loaded correctly later
+		bool update_userf(User); // CHECK IF THIS CAN BECOME A USER MEMBER FUNCTION
+		void display_entry();// allows an entry object to be viewed in detail by a user
 };
 
+// LOG STRUCTURES: These are the elements of which any log is composed. They are stored within
+// the entry's respective arrays
+
+// ACTIVITY STRUCTURE: Contains a single activity within an entry. It has a name (ex. `Running`)
+// and a record of the amount of time spent on each activity (in hours).
 struct Activity
 {
 	public:
@@ -74,67 +74,55 @@ struct Activity
 		float time;
 };
 
+// EXPENDITURE STRUCTURE: Contains a single expenditure within an entry. It, also, has a name
+// (ex. `Gasoline`) and cost associated with the particular expense (in units of currency (ex. USD)).
 struct Expenditure
 {
 	public:
 		string e_name;
 		float price;
-		// what if we added a metric for quantity? is it better to have general categories
-		// so that we increase use across goods AND services :dunno:
+		// QUANTITY?
+
 };
 
 
-
 ///////--GENERAL FUNCTION PROTOTYPES--///////
+string day_o_year(); // helper function for generating entry dates
 
-string day_o_year();
+int time_o_day(); // helper function for greeter which returns the hour of the day
 
-void generate_entry(User&);
-
-// helper function for greeter which returns the hour of the day
-int time_o_day();
-
-string generate_dphase(int);
-///////----///////
+string generate_dphase(int); // UNFINISHED
 
 
 ///////--LOG WRITING && READING--///////
+void generate_entry(User&); // large function for writing and properly saving new log entries
 
-void generate_entry(User&);
-
-Entry open_entry(string, int, int);
-
-
-///////----///////
+Entry open_entry(string, int, int); // opens an entry file and returns it as an `Entry` object
 
 
 ///////--PROFILE FUNCTIONS--///////
-// searches a folder for a filename which contain user info used by the greeter() function
-bool find_profile(string);
+bool find_profile(string); // searches for and loads a user via their file
 
-bool save_new_profile(User);
+User create_profile(); // gathers information for a new profile
 
-// equates the actual users profile with the user object used by the program
-User load_profile(string);
+bool save_new_profile(User); // saves a new profile permanently to a file
 
-User load_guest();
+User load_profile(string); // loads a profile into the program's `User` object from file
 
-void display_profile(User);
+User load_guest(); // loads the pre-packaged `guest` profile
 
-void display_profile(string, string, string, bool);
+void display_profile(User); // displays a user's details in a readable format
 
-// creates a new profile to be saved as a formated .txt file
-User create_profile();
+void display_profile(string, string, string, bool); // overloaded form of the above function for use during profile generation
+													// when a user object is not available
 
-// greets user. first prompts for a profile name or to create a new profile
-// (male female,
-User greeter();
+User greeter(); // fills the program's user object with either and existing user, the guest profile
+				// or by generating a new profile
 
-void display_menu();
-
-///////----///////
+void main_menu(); // the looping main menu function
 
 
+// WE NEED A FUNCTION WHICH UTILIZES THE RANDOM LIBRARY
 
 
 

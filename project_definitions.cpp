@@ -9,25 +9,87 @@
 
 using namespace std;
 
-string day_o_year()
+///////--USER MEMBER FUNCTION--///////
+void User::browse_entries()
 {
-	int month, day, year;
-	string result;
+	int counter = 1;
+	char gate0 = 'g', gate1 = 'g';
 
-	time_t t = time(0);
-	tm* now = localtime(&t);
+	while (gate0 == 'g')
+	{
+		cout << "Here are all logs associated with your account (labelled by date):" << endl << endl;
 
-	month = now -> tm_mon + 1;
-	day = now -> tm_mday;
-	year = 1900 + now -> tm_year;
+		for (string e : entries)
+		{
+			cout << "Entry " << counter << ": " << e << endl << endl;
+			counter++;
+		}
 
-	result = to_string(month) + "-" + to_string(day) + "-" + to_string(year);
+		while (gate1 != 'y' && gate1 != 'n')
+		{
+			cout << "Would you like to examine one of these entries in detail? ('y'/'n')" << endl;
+			cin >> gate1;
+			cin.ignore();
+		}
 
-	return result;
+		if (gate1 == 'y')
+		{
+			int entry_choice = 0;
+			string entry_title;
+
+			while (entry_choice < 1 || entry_choice > entries.size())
+			{
+				cout << "Ok!" << endl;
+				cout << "Please enter the entry number you would like to see: ";
+				cin >> entry_choice;
+				cin.ignore();
+			}
+
+			entry_choice -= 1;
+			entry_title = entries[entry_choice] + ".txt";
+			// cout << entry_title << endl; //testing
+			int a_count, e_count;
+			string a_char, e_char;
+			ifstream input_file(entry_title);
+
+			getline(input_file, a_char, ',');
+			getline(input_file, e_char, ',');
+
+			input_file.close();
+
+			a_count = stoi(a_char);
+			e_count = stoi(e_char);
+
+			Entry this_entry(a_count, e_count);
+
+			this_entry = open_entry(entry_title, a_count, e_count); // THE PROBLEM IS WITH THIS FUNCTION =(
+
+			this_entry.display_entry();
+		}
+		else
+		{
+			return;
+		}
+
+		char gate2 = 'g';
+
+		while (gate2 != 'y' && gate2 != 'n')
+		{
+			cout << "Would you like to view your entries again? ('y'/'n')" << endl;
+			cin >> gate2;
+			cin.ignore();
+		}
+		if (gate2 == 'n')
+		{
+			gate0 = 'n';
+		}
+		else
+			continue;
+	}
 }
 
 ///////--ENTRY MEMBER FUNCTIONS--///////
-// Constructor
+// constructor
 Entry::Entry(int a_count, int e_count)
 {
 	// initialization of basic members
@@ -36,23 +98,101 @@ Entry::Entry(int a_count, int e_count)
 	ex_count = e_count;
 
 	// allocation of array space
-	if (a_count != 0)
+	if (a_count > 0)
 	{
 		act_arr = new Activity[act_count];
 	}
-	if (e_count != 0)
+	else
+		act_arr = nullptr;
+
+	if (e_count > 0)
 	{
 		ex_arr = new Expenditure[ex_count];
 	}
+	else
+		ex_arr = nullptr;
 }
-
+// destructor
 Entry::~Entry()
 {
 	// prevents memory leaks when object falls out of scope and is destroyed
 	delete [] act_arr;
 	delete [] ex_arr;
 }
-// function called in a loop to write activities, one at a time, to the object's corresponding array
+// copy constructor
+Entry::Entry(const Entry &copy)
+{
+	// cout << "Copy Constructor Called" << endl;
+	act_count = copy.act_count;
+	ex_count = copy.ex_count;
+	date = copy.date;
+	if (act_count > 0)
+	{
+		act_arr = new Activity[act_count];
+		Activity* act_plate;
+		for (int i = 0; i < act_count; i++ )
+		{
+			act_plate = &copy.act_arr[i];
+			act_arr[i].a_name = act_plate -> a_name;
+			act_arr[i].time = act_plate -> time;
+		}
+	}
+	else
+		act_arr = nullptr;
+
+	if (ex_count > 0)
+	{
+		ex_arr = new Expenditure[ex_count];
+		Expenditure* ex_plate;
+		for (int i = 0; i < ex_count; i++)
+		{
+			ex_plate = &copy.ex_arr[i];
+			ex_arr[i].e_name = ex_plate -> e_name;
+			ex_arr[i].price = ex_plate -> price;
+		}
+	}
+	else
+		ex_arr = nullptr;
+
+}
+// copy assignment operator
+Entry& Entry::operator = (const Entry &to_copy)
+{
+	// cout << "Special Copy Operator Called" << endl;
+
+	delete[] act_arr;
+	if (to_copy.act_count > 0)
+	{
+		act_arr = new Activity[to_copy.act_count];
+		for (int i = 0; i < to_copy.act_count; i++)
+		{
+			act_arr[i].a_name = to_copy.act_arr[i].a_name;
+			act_arr[i].time = to_copy.act_arr[i].time;
+		}
+	}
+	else
+		act_arr = nullptr;
+
+	delete[] ex_arr;
+	if (to_copy.ex_count > 0)
+	{
+		ex_arr = new Expenditure[to_copy.ex_count];
+		for (int i = 0; i < to_copy.ex_count; i++)
+		{
+			ex_arr[i].e_name = to_copy.ex_arr[i].e_name;
+			ex_arr[i].price = to_copy.ex_arr[i].price;
+		}
+	}
+	else
+		ex_arr = nullptr;
+
+	act_count = to_copy.act_count;
+	ex_count = to_copy.ex_count;
+	date = to_copy.date;
+
+	return *this;
+}
+
 void Entry::write_act(vector<string> &names, int position)
 {
 	float hours;
@@ -66,8 +206,7 @@ void Entry::write_act(vector<string> &names, int position)
 	scope -> a_name = names[position];
 	scope -> time = hours;
 }
-// function called in a loop to write expenditures, one at a time, to the object's corresponding array
-// function called in a loop to write expenditures, one at a time, to the object's corresponding array
+
 void Entry::write_ex(vector<string> &names, int position)
 {
 	float e_cost;
@@ -81,7 +220,7 @@ void Entry::write_ex(vector<string> &names, int position)
 	scope -> e_name = names[position];
 	scope -> price = e_cost;
 }
-// writes an entire entry to a file
+
 bool Entry::write_to_file()
 {
 	Activity * act_plate;
@@ -151,6 +290,84 @@ bool User::update_userf(Entry update_subject)
 	return true;
 }
 */
+
+void Entry::display_entry()
+{
+	cout << "!!!--.ENTRY DETAILS.--!!!" << endl;
+	cout << "date: " << date << endl;
+	cout << "ACTIVITIES:" << endl;
+
+	if (act_count == 0)
+	{
+		cout << "\t NONE" << endl;
+	}
+	else
+	{
+		Activity * act_plate;
+		// int counter0 = act_count - 1;
+
+		for (int i = 0; i < act_count; i++)
+		{
+			act_plate = &act_arr[i];
+			cout << "\tActivity: " << act_plate -> a_name << endl;
+			cout << "\tHours: " << act_plate -> time << endl;
+		}
+	}
+
+
+	if (ex_count == 0)
+	{
+		return;
+	}
+	else
+	{
+		cout << "EXPENDITURES:" << endl;
+		Expenditure * ex_plate;
+		// int counter1 = ex_count -1;
+
+		for (int i = 0; i < ex_count; i++)
+		{
+			ex_plate = &ex_arr[i];
+			cout << "\tExpenditure: " << ex_plate -> e_name << endl;
+			cout << "\tCost: $" << ex_plate -> price << endl;
+		}
+	}
+	cout << endl << endl;
+}
+
+///////--GENERAL FUNCTIONS--///////
+string day_o_year()
+{
+	int month, day, year;
+	string result;
+
+	time_t t = time(0);
+	tm* now = localtime(&t);
+
+	month = now -> tm_mon + 1;
+	day = now -> tm_mday;
+	year = 1900 + now -> tm_year;
+
+	result = to_string(month) + "-" + to_string(day) + "-" + to_string(year);
+
+	return result;
+}
+
+int time_o_day()
+{
+	time_t my_time = time(0);
+
+	tm* now = localtime(&my_time);
+
+	return now -> tm_hour;
+}
+
+string generate_dphase(int hour)
+{
+
+}
+
+///////--LOG WRITING && READING FUNCTIONS--///////
 void generate_entry(User& subject)
 {
 	vector<string> activity;
@@ -214,6 +431,7 @@ void generate_entry(User& subject)
 
 				cout << endl << endl << "Do you have more expenditures to record? ('n' to quit)" << endl;
 				cin >> choice_3;
+				cin.ignore();
 			}
 		 }
 	}
@@ -309,74 +527,11 @@ void generate_entry(User& subject)
 
 }
 
-void User::browse_entries()
-{
-	int counter = 1;
-	char gate = 'g';
-
-	cout << "Here are all logs associated with your account (labelled by date):" << endl << endl;
-
-	for (string e : entries)
-	{
-		cout << "Entry " << counter << ": " << e << endl << endl;
-	}
-
-	while (gate != 'y' && gate != 'n')
-	{
-		cout << "Would you like to examine one of these entries in detail? ('y'/'n')" << endl;
-		cin >> gate;
-		cin.ignore();
-	}
-
-	if (gate == 'y')
-	{
-		int entry_choice = 0;
-		string entry_title;
-
-		while (entry_choice < 1 || entry_choice > entries.size())
-		{
-			cout << "Ok!" << endl;
-			cout << "Please enter the entry number you would like to see: ";
-			cin >> entry_choice;
-			cin.ignore();
-		}
-
-		entry_choice -= 1;
-		entry_title = entries[entry_choice] + ".txt";
-		// cout << entry_title << endl; //testing
-		int a_count, e_count;
-		string a_char, e_char;
-	 	ifstream input_file(entry_title);
-
-		getline(input_file, a_char, ',');
-		getline(input_file, e_char, ',');
-
-		input_file.close();
-
-		a_count = stoi(a_char);
-		e_count = stoi(e_char);
-		cout << a_count << " " << e_count << endl; // if we pass (1,0) as arguements, it fails (1,1) passes
-		Entry this_entry(a_count, e_count);
-
-		this_entry = open_entry(entry_title, a_count, e_count); // THE PROBLEM IS WITH THIS FUNCTION =(
-/*
-		Activity * tester = &this_entry.act_arr[0]; //testing
-		cout << "Date: " << this_entry.date << endl;
-		cout << "A Count: " << this_entry.act_count << endl; // RESULT: date and time, a_count are correct.
-		cout << "E Count: " << this_entry.ex_count << endl;  // E count is wrong, activity is blank
-		cout << "Activity: " << tester -> a_name << endl;    // exit code -1
-		cout << "Time: " << tester -> time << endl;
-
-		//cout << "TEST2: " << tester -> a_name << endl; // testing
-		//cout << "Is something wrong" << endl; //testing
-		// this_entry.display_entry(); */
-	}
-}
-
 Entry open_entry(string entry_title, int act, int exp)
 {
 	Entry bucket(act, exp); // problem starts here // IS THE PROBLEM THAT THIS IS A USER FUNCTION???
-	/*string a, e, temp;
+	cout << "Did it crash?" << endl;
+	string a, e, temp;
 	int a_count, e_count;
 	Activity * act_plate;
 	Expenditure * exp_plate;
@@ -416,67 +571,11 @@ Entry open_entry(string entry_title, int act, int exp)
 	}
 	act_plate = &bucket.act_arr[0]; // testing
 	cout << "TEST:" << act_plate->a_name << endl; //testing HERE ITS IN
-	*/
+
 	return bucket;
 }
 
-void Entry::display_entry()
-{
-	cout << "!!!--.ENTRY DETAILS.--!!!" << endl;
-	cout << "date: " << date << endl;
-	cout << "ACTIVITIES:" << endl;
-
-	if (act_count == 0)
-	{
-		cout << "\t NONE" << endl;
-	}
-	else
-	{
-		Activity * act_plate;
-		int counter0 = act_count - 1;
-
-		while (counter0 >= 0)
-		{
-			act_plate = &act_arr[counter0];
-			cout << "\tActivity: " << act_plate -> a_name << endl;
-			cout << "\tHours Spent: " << act_plate -> time << endl;
-		}
-	}
-
-	if (ex_count == 0)
-	{
-		return;
-	}
-	else
-	{
-		Expenditure * ex_plate;
-		int counter1 = ex_count -1;
-
-		while (counter1 >= 0)
-		{
-			ex_plate = &ex_arr[counter1];
-
-			cout << "EXPENDITURES:" << endl;
-			cout << "\tExpenditure: " << ex_plate -> e_name << endl;
-			cout << "\tCost: $" << ex_plate -> price << endl;
-		}
-	}
-}
-
-int time_o_day()
-{
-	time_t my_time = time(0);
-
-	tm* now = localtime(&my_time);
-
-	return now -> tm_hour;
-}
-
-string generate_dphase(int hour)
-{
-
-}
-
+///////--PROFILE FUNCTIONS--///////
 bool find_profile(string profile_name)
 {
 	string file_name = profile_name + ".txt";
@@ -493,6 +592,97 @@ bool find_profile(string profile_name)
 		input_file.close();
 		return true;
 	}
+}
+
+User create_profile()
+{
+	User loadee;
+
+	string user_name, u_fname, nick_name, fav_act, try_response;
+	char elect = 'g', sex;
+	bool gate0 = true, gate1 = true;
+	int sex_num = 3;
+
+	cout << "We are so glad you would like to become a permanent member of the MASTERY FAMILY!" << endl;
+	cout << "Let's begin!" << endl << endl;
+
+	while (gate0)
+	{
+		cout << "What would you like your username to be:" << endl;
+	    getline(cin, user_name);
+
+	    gate0 = find_profile(user_name);
+
+	    (!gate0 ? try_response = "Username availiable!" : try_response = "Username already taken!");
+
+	    cout << endl << try_response << endl << endl;
+	}
+
+	cout << "Now that your username has been determined, what would you actually like to be called?" << endl;
+	getline(cin, nick_name);
+	// cin.ignore();
+
+	do
+	{
+		cout << endl << "Would you like to select a favorite activity? (y/n)" << endl;
+		cin >> elect;
+	} while (elect != 'y' && elect != 'n');
+
+	if (elect == 'y')
+	{
+		cout << "Enter your favorite activity:" << endl;
+		getline(cin, fav_act);
+		cin.ignore();
+	}
+
+	if (elect == 'n')
+	{
+		cout << "No problem! One can be assigned later" << endl << endl;
+		fav_act = "none";
+	}
+
+	while (sex_num != 1 && sex_num != 2)
+	{
+		cout << "Finally, please select one biological sex by which you will be identified: (1 = male, 2 = female)" << endl;
+		cin >> sex_num;
+	}
+
+	(sex_num == 1 ? sex = 1 : sex = 0);
+
+	cout << "OK! Lets summarize:" << endl;
+
+	display_profile(user_name, nick_name, fav_act, sex);
+
+	while (gate1)
+	{
+		cout << endl << "Save this profile? (y/n)" << endl;
+		cin >> elect;
+
+		if (elect == 'y')
+		{
+			gate1 = false;
+		}
+		else
+		{
+			break;
+		}
+
+	}
+
+	loadee.profile_name = user_name;
+	loadee.preferred_name = nick_name;
+	loadee.fav_act = fav_act;
+	loadee.sex = sex;
+
+	bool save_state = save_new_profile(loadee);
+	(
+		save_state == true ?
+		cout << "Profile created and saved successfully" << endl
+		:
+		cout << "Profile was not saved correctly" << endl
+	);
+
+	return loadee;
 }
 
 bool save_new_profile(User to_save)
@@ -585,97 +775,6 @@ void display_profile(string u_name, string p_name, string fav, bool s)
 	cout << "Biological Sex: ";
 	(s == 1 ? cout << "Male" : cout << "Female") << endl;
 	cout << endl;
-}
-
-User create_profile()
-{
-	User loadee;
-
-	string user_name, u_fname, nick_name, fav_act, try_response;
-	char elect = 'g', sex;
-	bool gate0 = true, gate1 = true;
-	int sex_num = 3;
-
-	cout << "We are so glad you would like to become a permanent member of the MASTERY FAMILY!" << endl;
-	cout << "Let's begin!" << endl << endl;
-
-	while (gate0)
-	{
-		cout << "What would you like your username to be:" << endl;
-	    getline(cin, user_name);
-
-	    gate0 = find_profile(user_name);
-
-	    (!gate0 ? try_response = "Username availiable!" : try_response = "Username already taken!");
-
-	    cout << endl << try_response << endl << endl;
-	}
-
-	cout << "Now that your username has been determined, what would you actually like to be called?" << endl;
-	getline(cin, nick_name);
-	// cin.ignore();
-
-	do
-	{
-		cout << endl << "Would you like to select a favorite activity? (y/n)" << endl;
-		cin >> elect;
-	} while (elect != 'y' && elect != 'n');
-
-	if (elect == 'y')
-	{
-		cout << "Enter your favorite activity:" << endl;
-		getline(cin, fav_act);
-		cin.ignore();
-	}
-
-	if (elect == 'n')
-	{
-		cout << "No problem! One can be assigned later" << endl << endl;
-		fav_act = "none";
-	}
-
-	while (sex_num != 1 && sex_num != 2)
-	{
-		cout << "Finally, please select one biological sex by which you will be identified: (1 = male, 2 = female)" << endl;
-		cin >> sex_num;
-	}
-
-	(sex_num == 1 ? sex = 1 : sex = 0);
-
-	cout << "OK! Lets summarize:" << endl;
-
-	display_profile(user_name, nick_name, fav_act, sex);
-
-	while (gate1)
-	{
-		cout << endl << "Save this profile? (y/n)" << endl;
-		cin >> elect;
-
-		if (elect == 'y')
-		{
-			gate1 = false;
-		}
-		else
-		{
-			break;
-		}
-
-	}
-
-	loadee.profile_name = user_name;
-	loadee.preferred_name = nick_name;
-	loadee.fav_act = fav_act;
-	loadee.sex = sex;
-
-	bool save_state = save_new_profile(loadee);
-	(
-		save_state == true ?
-		cout << "Profile created and saved successfully" << endl
-		:
-		cout << "Profile was not saved correctly" << endl
-	);
-
-	return loadee;
 }
 
 User greeter()
@@ -777,6 +876,12 @@ User greeter()
 	cout << "Good " << d_phase << ", " << final_name << "!" << endl;
 	return subject;
 }
+
+void main_menu()
+{
+
+}
+
 
 
 
