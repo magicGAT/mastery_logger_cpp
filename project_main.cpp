@@ -7,6 +7,8 @@ FINAL PROJECT MAPPING AND MAIN FUNCTION
 #include <cmath>
 #include <string>
 #include <fstream>
+#include "log_users.h"
+
 
 using namespace std;
 
@@ -14,14 +16,25 @@ using namespace std;
 int main()
 {
 	// greeting/load a profile (perhaps include a couple of sample profile for demo purposes)
-	User my_user = greeter(); 
+	User my_user = greeter();
 
-	cout << endl << endl << display_profile(my_user) << endl;
+	//cout << endl << endl;
+	//display_profile(my_user);
+	//cout << endl;
+
+
+	my_user.ex_dweek();
+	my_user.ex_dmonth();
+	my_user.ex_dyear();
+	my_user.ex_wmonth();
+	my_user.ex_wquart();
+	my_user.ex_wyear();
+	my_user.ex_mquart();
+	my_user.ex_myear();
 
 	// INSERT PHILOSOPHICAL/JOKE MESSAGE HERE
-
+/*
 	// MAIN MENU
-	char selector;
 	bool on = true;
 
 	while (on == true)
@@ -35,12 +48,12 @@ int main()
 		cout << "p) make PROJECTIONS based on your entries" << endl;
 		cout << "a) learn ABOUT mastery family" << endl;
 		cout << "x) EXIT" << endl;
-	
-		cin >> selector
+
+		cin >> selector;
 
 		switch (selector)
 		{
-			// option 1: JOURNAL AN ENTRY 
+			// option 1: JOURNAL AN ENTRY
 			// how can we enfore that a users new activity/expenditure objects will match exisiting ones
 			// to prevent massive failure from simple typos (a function that compares strings and asks the
 			// user if they are the same in the event of minor char differences?)
@@ -69,9 +82,35 @@ int main()
 			break;
 		}
 	}
-
-	return 0; 
+*/
+	return 0;
 }
+
+// work flow
+/*
+ 	 1) Test if the update user file function can be used in the way we originally wanted TEST FAILED, MOVE ON AND CIRCLE BACK LATER
+ 	 2) We have the XXgreeter set upXX, XXwe can write and save entriesXX, now XXwe need to be able to
+ 	    view entries that the user has associated with their profileXX AND we need to write the
+ 	    analysis and projection functions. Finally we will write a main loop function, review,
+ 	    fix and add all neccessary commments and do the write up.
+
+ 	 IDEAS: editing existing files? testing suite for teacher evaluation (premade profile with projections
+ 	        and ability to create files with custom dates) error handling?
+
+ 	 CHANGE: FILE SYSTEM, GIVE EACH USER THEIR OWN FOLDER FOR BETTER ORGANIZATION OR AT LEAST
+ 	 A PREFIX WHICH CAN DISTINGUISH THEIR ENTRIES FROM OTHER USERS ON THE SAME DAY
+ */
+
+// TO DO
+// 1) Analysis Functions SEE PLANNING SHEET
+// 2) Either use a file system or change the naming convention
+// 3) Bug Test SEE NOTES
+// 4) Create testing suite of files and a README FILES DONE
+// 4) Write up SEE NOTES
+// 5) Extra features (cool quotes, fav_act utilization, editing)
+// 6) WHAT IF USER ENTERS A DATE FOR BEGINNING A RANGE WHICH CANNOT BE COMPLETED?
+	// WE NEED TO CATCH THAT SITUATION
+	// ALSO, WHAT IF THE QUERY TERM IS NOT IN THE VECTOR OF ACTIVITIES? IT WILL QUERY vector[99]. BAD!
 
 
 

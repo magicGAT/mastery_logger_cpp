@@ -5,6 +5,8 @@
 #include <ctime>
 #include <chrono>
 #include <fstream>
+#include <vector>
+
 
 
 using namespace std;
@@ -12,11 +14,12 @@ using namespace std;
 ///////--USER MEMBER FUNCTION--///////
 void User::browse_entries()
 {
-	int counter = 1;
+
 	char gate0 = 'g', gate1 = 'g';
 
 	while (gate0 == 'g')
 	{
+		int counter = 1;
 		cout << "Here are all logs associated with your account (labelled by date):" << endl << endl;
 
 		for (string e : entries)
@@ -88,6 +91,709 @@ void User::browse_entries()
 	}
 }
 
+void User::week_report()
+{
+	cout << "Weekly Report!" << endl;
+	cout << "This will select any 7 day period and display the accumulated activities and expenditures" << endl;
+	cout << "Please select a starting date from the following list: " << endl;
+
+	int counter = 1;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+		counter++;
+	}
+
+	int entry_choice = 0;
+	string entry_title;
+
+	while (entry_choice < 1 || entry_choice > entries.size())
+	{
+		//cout << "Ok!" << endl;
+		cout << "Please enter the entry number you would like to set as the starting date: ";
+		cin >> entry_choice;
+		cin.ignore();
+	}
+
+	entry_choice -= 1;
+
+	int day_count = 7;
+
+	vector <string> act_names;
+	vector <float> act_hours;
+	vector <string> ex_names;
+	vector <float> ex_prices;
+
+	while (day_count > 0)
+	{
+		entry_title = entries[entry_choice] + ".txt";
+		//cout << "file name: " << entry_title;
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+		ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count);
+
+		Activity* act_plate;
+		Expenditure* ex_plate;
+
+		for (int i = 0; i < this_entry.act_count; i++)
+		{
+			//cout << "activity counter" << endl;
+			act_plate = &this_entry.act_arr[i];
+			//cout << "search result: " << /*search_vector(act_plate -> a_name, act_names) << */endl;
+			int place = search_vector(act_plate -> a_name, act_names);
+			//cout << "vector searched" << endl;
+
+
+			if (place == 99)
+			{
+				act_names.push_back(act_plate -> a_name);
+				act_hours.push_back(act_plate -> time);
+			}
+			else
+			{
+				float temp = act_hours[place];
+				temp += act_plate -> time;
+				act_hours[place] = temp;
+			}
+		}
+
+		for (int i = 0; i < this_entry.ex_count; i++)
+		{
+			ex_plate = &this_entry.ex_arr[i];
+			int place = search_vector(ex_plate -> e_name, ex_names);
+
+			if (place == 99)
+			{
+				ex_names.push_back(ex_plate -> e_name);
+				ex_prices.push_back(ex_plate -> price);
+			}
+			else
+			{
+				float temp = ex_prices[place];
+				temp += ex_plate -> price;
+				ex_prices[place] = temp;
+			}
+		}
+
+		entry_choice++;
+		day_count--;
+	}
+
+	cout << "--.WEEKLY TOTALS REPORT.--" << endl;
+	cout << "Activities:" << endl;
+	for (int i = 0; i < act_names.size(); i++)
+	{
+		cout << "\t" << act_names[i] << ": ";
+		cout << act_hours[i] << " hours" << endl;
+	}
+	cout << "Expenditures:" << endl;
+	for (int i = 0; i < ex_names.size(); i++)
+	{
+		cout << "\t" << ex_names[i] << ": ";
+		cout << "$" << ex_prices[i] << endl;
+	}
+}
+
+void User::month_report()
+{
+	cout << "Weekly Report!" << endl;
+	cout << "This will select any 30 day period and display the accumulated activities and expenditures" << endl;
+	cout << "Please select a starting date from the following list: " << endl;
+
+	int counter = 1;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+		counter++;
+	}
+
+	int entry_choice = 0;
+	string entry_title;
+
+	while (entry_choice < 1 || entry_choice > entries.size())
+	{
+		//cout << "Ok!" << endl;
+		cout << "Please enter the entry number you would like to set as the starting date: ";
+		cin >> entry_choice;
+		cin.ignore();
+	}
+
+	entry_choice -= 1;
+
+	int day_count = 30;
+
+	vector <string> act_names;
+	vector <float> act_hours;
+	vector <string> ex_names;
+	vector <float> ex_prices;
+
+	while (day_count > 0)
+	{
+		entry_title = entries[entry_choice] + ".txt";
+		//cout << "file name: " << entry_title;
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+		ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count);
+
+		Activity* act_plate;
+		Expenditure* ex_plate;
+
+		for (int i = 0; i < this_entry.act_count; i++)
+		{
+			cout << "activity counter" << endl;
+			act_plate = &this_entry.act_arr[i];
+			//cout << "search result: " << /*search_vector(act_plate -> a_name, act_names) << */endl;
+			int place = search_vector(act_plate -> a_name, act_names);
+			//cout << "vector searched" << endl;
+
+
+			if (place == 99)
+			{
+				act_names.push_back(act_plate -> a_name);
+				act_hours.push_back(act_plate -> time);
+			}
+			else
+			{
+				float temp = act_hours[place];
+				temp += act_plate -> time;
+				act_hours[place] = temp;
+			}
+		}
+
+		for (int i = 0; i < this_entry.ex_count; i++)
+		{
+			ex_plate = &this_entry.ex_arr[i];
+			int place = search_vector(ex_plate -> e_name, ex_names);
+
+			if (place == 99)
+			{
+				ex_names.push_back(ex_plate -> e_name);
+				ex_prices.push_back(ex_plate -> price);
+			}
+			else
+			{
+				float temp = ex_prices[place];
+				temp += ex_plate -> price;
+				ex_prices[place] = temp;
+			}
+		}
+
+		entry_choice++;
+		day_count--;
+	}
+
+	cout << "--.MONTHLY TOTALS REPORT.--" << endl;
+	cout << "Activities:" << endl;
+	for (int i = 0; i < act_names.size(); i++)
+	{
+		cout << "\t" << act_names[i] << ": ";
+		cout << act_hours[i] << " hours" << endl;
+	}
+	cout << "Expenditures:" << endl;
+	for (int i = 0; i < ex_names.size(); i++)
+	{
+		cout << "\t" << ex_names[i] << ": ";
+		cout << "$" << ex_prices[i] << endl;
+	}
+}
+void User::day_mproj(string query_term)
+{
+	cout << "Mastery Query!" << endl;
+	cout << "This will give us an estimated time frame to achieve mastery in " << query_term << " based on a single day's performance" << endl;
+	cout << "Here are you availiable data points: " << endl;
+
+	int counter = 1;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+		counter++;
+	}
+
+	int entry_choice = 0;
+	string entry_title;
+
+	while (entry_choice < 1 || entry_choice > entries.size())
+	{
+		//cout << "Ok!" << endl;
+		cout << "Please enter the entry number you would like to set as your sample: ";
+		cin >> entry_choice;
+		cin.ignore();
+	}
+
+	entry_choice -= 1;
+
+	int day_count = 1;
+
+	vector <string> act_names;
+	vector <float> act_hours;
+	//vector <string> ex_names;
+	//vector <float> ex_prices;
+
+	while (day_count > 0)
+	{
+		entry_title = entries[entry_choice] + ".txt";
+		//cout << "file name: " << entry_title;
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+		ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count);
+
+		Activity* act_plate;
+
+		for (int i = 0; i < this_entry.act_count; i++)
+		{
+			act_plate = &this_entry.act_arr[i];
+			//cout << "search result: " << /*search_vector(act_plate -> a_name, act_names) << */endl;
+			int place = search_vector(act_plate -> a_name, act_names);
+			//cout << "vector searched" << endl;
+
+
+			if (place == 99)
+			{
+				act_names.push_back(act_plate -> a_name);
+				act_hours.push_back(act_plate -> time);
+			}
+			else
+			{
+				float temp = act_hours[place];
+				temp += act_plate -> time;
+				act_hours[place] = temp;
+			}
+		}
+
+		//entry_choice++;
+		day_count--;
+	}
+
+	int place = search_vector(query_term, act_names);
+
+	float total = act_hours[place];
+
+	if (total == 0)
+	{
+		cout << "Please check your sample, no activity hours detected" << endl << endl;
+	}
+	else
+	{
+		cout << "Based on this sample, you will reach mastery of " << query_term << " in " << (10000 / total) << " days";
+		cout << endl << endl;
+	}
+}
+void User::week_mproj(string query_term)
+{
+	cout << "Mastery Query!" << endl;
+	cout << "This will give us an estimated time frame to achieve mastery in " << query_term << " based on a your performance totals during any 7 day period" << endl;
+	cout << "Here are you availiable entries: " << endl;
+
+	int counter = 1;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+		counter++;
+	}
+
+	int entry_choice = 0;
+	string entry_title;
+
+	while (entry_choice < 1 || entry_choice > entries.size())
+	{
+		//cout << "Ok!" << endl;
+		cout << "Please enter the entry number you would like to set as your starting point: ";
+		cin >> entry_choice;
+		cin.ignore();
+	}
+
+	entry_choice -= 1;
+
+	int day_count = 7;
+
+	vector <string> act_names;
+	vector <float> act_hours;
+	//vector <string> ex_names;
+	//vector <float> ex_prices;
+
+	while (day_count > 0)
+	{
+		entry_title = entries[entry_choice] + ".txt";
+		//cout << "file name: " << entry_title;
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+		ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count);
+
+		Activity* act_plate;
+
+		for (int i = 0; i < this_entry.act_count; i++)
+		{
+			act_plate = &this_entry.act_arr[i];
+			//cout << "search result: " << /*search_vector(act_plate -> a_name, act_names) << */endl;
+			int place = search_vector(act_plate -> a_name, act_names);
+			//cout << "vector searched" << endl;
+
+
+			if (place == 99)
+			{
+				act_names.push_back(act_plate -> a_name);
+				act_hours.push_back(act_plate -> time);
+			}
+			else
+			{
+				float temp = act_hours[place];
+				temp += act_plate -> time;
+				act_hours[place] = temp;
+			}
+		}
+
+		//entry_choice++;
+		day_count--;
+	}
+
+	int place = search_vector(query_term, act_names);
+
+	float total = act_hours[place];
+
+	if (total == 0)
+	{
+		cout << "Please check your sample, no activity hours detected" << endl << endl;
+	}
+	else
+	{
+		cout << "Based on this sample, you will reach mastery of " << query_term << " in " << (10000 / total) << " weeks";
+		cout << endl << endl;
+	}
+}
+void User::month_mproj(string query_term)
+{
+	cout << "Mastery Query!" << endl;
+	cout << "This will give us an estimated time frame to achieve mastery in " << query_term << " based on a your performance totals during any 30 day period" << endl;
+	cout << "Here are you availiable entries: " << endl;
+
+	int counter = 1;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+		counter++;
+	}
+
+	int entry_choice = 0;
+	string entry_title;
+
+	while (entry_choice < 1 || entry_choice > entries.size())
+	{
+		//cout << "Ok!" << endl;
+		cout << "Please enter the entry number you would like to set as your starting point: ";
+		cin >> entry_choice;
+		cin.ignore();
+	}
+
+	entry_choice -= 1;
+
+	int day_count = 30;
+
+	vector <string> act_names;
+	vector <float> act_hours;
+	//vector <string> ex_names;
+	//vector <float> ex_prices;
+
+	while (day_count > 0)
+	{
+		entry_title = entries[entry_choice] + ".txt";
+		//cout << "file name: " << entry_title;
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+		ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count);
+
+		Activity* act_plate;
+
+		for (int i = 0; i < this_entry.act_count; i++)
+		{
+			act_plate = &this_entry.act_arr[i];
+			//cout << "search result: " << /*search_vector(act_plate -> a_name, act_names) << */endl;
+			int place = search_vector(act_plate -> a_name, act_names);
+			//cout << "vector searched" << endl;
+
+
+			if (place == 99)
+			{
+				act_names.push_back(act_plate -> a_name);
+				act_hours.push_back(act_plate -> time);
+			}
+			else
+			{
+				float temp = act_hours[place];
+				temp += act_plate -> time;
+				act_hours[place] = temp;
+			}
+		}
+
+		//entry_choice++;
+		day_count--;
+	}
+
+	int place = search_vector(query_term, act_names);
+
+	float total = act_hours[place];
+
+	if (total == 0)
+	{
+		cout << "Please check your sample, no activity hours detected" << endl << endl;
+	}
+	else
+	{
+		cout << "Based on this sample, you will reach mastery of " << query_term << " in " << (10000 / total) << " months";
+		cout << endl << endl;
+	}
+}
+void User::ex_dweek()
+{
+	string query, frame = "week";
+	float total;
+
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 1);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 7) << endl << endl;
+}
+void User::ex_dmonth()
+{
+	string query , frame = "month";
+	float total;
+
+	cout << "For What expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 1);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 30) << endl << endl;
+}
+void User::ex_dyear()
+{
+	string query, frame = "year";
+	float total;
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 1);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 365) << endl << endl;
+}
+void User::ex_wmonth()
+{
+	string query, frame = "month";
+	float total;
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 7);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 4) << endl << endl;
+}
+void User::ex_wquart()
+{
+	string query, frame = "quarter";
+	float total;
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 7);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 12) << endl << endl;
+}
+void User::ex_wyear()
+{
+	string query, frame = "year";
+	float total;
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 7);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 48) << endl << endl;
+}
+void User::ex_mquart()
+{
+	string query, frame = "quarter";
+	float total;
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 30);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 3) << endl << endl;
+}
+void User::ex_myear()
+{
+	string query, frame = "year";
+	float total;
+
+	cout << "For what expenditure would you like to calculate a projection?" << endl;
+	getline(cin, query);
+
+	total = total_cost(query, frame, 30);
+
+	cout << "Projected expense over the next " << frame << " : $" << (total * 12) << endl << endl;
+}
+
+float User::total_cost(string query_term, string period, int days)
+{
+	cout << "Cost Projection!" << endl;
+	cout << "This will give you the projected cost of any particular expenditure over the next " << period << " according to the corresponding expenditure during any particular " << sample_frame(days) << endl;
+	cout << "Here are you availiable entries: " << endl;
+
+	int counter = 1;
+
+	for (string e : entries)
+	{
+		cout << "Entry " << counter << ": " << e << endl << endl;
+		counter++;
+	}
+
+	int entry_choice = 0;
+	string entry_title;
+
+	while (entry_choice < 1 || entry_choice > entries.size())
+	{
+		//cout << "Ok!" << endl;
+		cout << "Please enter the entry number you would like to set as the starting date for your data sample: ";
+		cin >> entry_choice;
+		cin.ignore();
+	}
+
+	entry_choice -= 1;
+
+	int day_count = days;
+
+	//vector <string> act_names;
+	//vector <float> act_hours;
+	vector <string> ex_names;
+	vector <float> ex_prices;
+
+	while (day_count > 0)
+	{
+		entry_title = entries[entry_choice] + ".txt";
+		//cout << "file name: " << entry_title;
+		// cout << entry_title << endl; //testing
+		int a_count, e_count;
+		string a_char, e_char;
+		ifstream input_file(entry_title);
+
+		getline(input_file, a_char, ',');
+		getline(input_file, e_char, ',');
+
+		input_file.close();
+
+		a_count = stoi(a_char);
+		e_count = stoi(e_char);
+
+		Entry this_entry(a_count, e_count);
+
+		this_entry = open_entry(entry_title, a_count, e_count);
+
+		//Activity* act_plate;
+		Expenditure* ex_plate;
+
+		for (int i = 0; i < this_entry.ex_count; i++)
+		{
+			ex_plate = &this_entry.ex_arr[i];
+			int place = search_vector(ex_plate -> e_name, ex_names);
+
+			if (place == 99)
+			{
+				ex_names.push_back(ex_plate -> e_name);
+				ex_prices.push_back(ex_plate -> price);
+			}
+			else
+			{
+				float temp = ex_prices[place];
+				temp += ex_plate -> price;
+				ex_prices[place] = temp;
+			}
+		}
+
+		entry_choice++;
+		day_count--;
+	}
+
+	int place = search_vector(query_term, ex_names);
+	return ex_prices[place];
+}
+
 ///////--ENTRY MEMBER FUNCTIONS--///////
 // constructor
 Entry::Entry(int a_count, int e_count)
@@ -122,7 +828,7 @@ Entry::~Entry()
 // copy constructor
 Entry::Entry(const Entry &copy)
 {
-	// cout << "Copy Constructor Called" << endl;
+	cout << "Copy Constructor Called" << endl; // testing
 	act_count = copy.act_count;
 	ex_count = copy.ex_count;
 	date = copy.date;
@@ -158,7 +864,7 @@ Entry::Entry(const Entry &copy)
 // copy assignment operator
 Entry& Entry::operator = (const Entry &to_copy)
 {
-	// cout << "Special Copy Operator Called" << endl;
+	cout << "Special Copy Operator Called" << endl; // testing
 
 	delete[] act_arr;
 	if (to_copy.act_count > 0)
@@ -367,6 +1073,26 @@ string generate_dphase(int hour)
 
 }
 
+string sample_frame(int days)
+{
+	if (days == 1)
+	{
+		return "day";
+	}
+	else if (days == 7)
+	{
+		return "week";
+	}
+	else if (days == 30)
+	{
+		return "month";
+	}
+	else
+	{
+		return "unknown time period";
+	}
+}
+
 ///////--LOG WRITING && READING FUNCTIONS--///////
 void generate_entry(User& subject)
 {
@@ -530,7 +1256,7 @@ void generate_entry(User& subject)
 Entry open_entry(string entry_title, int act, int exp)
 {
 	Entry bucket(act, exp); // problem starts here // IS THE PROBLEM THAT THIS IS A USER FUNCTION???
-	cout << "Did it crash?" << endl;
+	//cout << "Did it crash?" << endl;
 	string a, e, temp;
 	int a_count, e_count;
 	Activity * act_plate;
@@ -554,7 +1280,7 @@ Entry open_entry(string entry_title, int act, int exp)
 		act_plate = &bucket.act_arr[a_count];
 		getline(input_file, act_plate -> a_name,',');
 		getline(input_file, temp, ',');
-		act_plate -> time = stoi(temp);
+		act_plate -> time = stof(temp);
 		// cout << act_plate -> a_name << endl; // testing HERE ITS IN
 
 		a_count--;
@@ -569,8 +1295,6 @@ Entry open_entry(string entry_title, int act, int exp)
 
 		e_count--;
 	}
-	act_plate = &bucket.act_arr[0]; // testing
-	cout << "TEST:" << act_plate->a_name << endl; //testing HERE ITS IN
 
 	return bucket;
 }
@@ -881,6 +1605,19 @@ void main_menu()
 {
 
 }
+
+int search_vector(string objective, vector <string> subject)
+{
+	for (int i = 0; i < subject.size(); i++)
+	{
+		if (subject[i] == objective)
+		{
+			return i;
+		}
+	}
+	return 99;
+}
+
 
 
 

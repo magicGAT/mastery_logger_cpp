@@ -33,6 +33,20 @@ class User
 		bool sex;
 		vector<string> entries;
 		void browse_entries(); //displays associated entries to the user
+		void week_report();
+		void month_report();
+		void day_mproj(string);
+		void week_mproj(string);
+		void month_mproj(string);
+		float total_cost(string, string, int);
+		void ex_dweek();
+		void ex_dmonth();
+		void ex_dyear();
+		void ex_wmonth();
+		void ex_wquart();
+		void ex_wyear();
+		void ex_mquart();
+		void ex_myear();
 };
 
 // ENTRY CLASS: ADT which defines a log entry and contains all it data. It's constructor
@@ -93,7 +107,9 @@ int time_o_day(); // helper function for greeter which returns the hour of the d
 
 string generate_dphase(int); // UNFINISHED
 
+int search_vector(string, vector <string>);
 
+string sample_frame(int);
 ///////--LOG WRITING && READING--///////
 void generate_entry(User&); // large function for writing and properly saving new log entries
 
