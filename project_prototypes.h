@@ -47,6 +47,7 @@ class User
 		void ex_wyear();
 		void ex_mquart();
 		void ex_myear();
+
 };
 
 // ENTRY CLASS: ADT which defines a log entry and contains all it data. It's constructor
@@ -71,7 +72,7 @@ class Entry
 		Entry& operator = (const Entry &to_copy); // copy assignment operator
 		void write_act(vector<string>&, int); // called by the function which generates new entries
 		void write_ex(vector<string>&, int); // called by the function which generates new entries
-		bool write_to_file(); // saves entries to a file in a format which can be loaded correctly later
+		bool write_to_file(User&); // saves entries to a file in a format which can be loaded correctly later
 		bool update_userf(User); // CHECK IF THIS CAN BECOME A USER MEMBER FUNCTION
 		void display_entry();// allows an entry object to be viewed in detail by a user
 };
@@ -110,6 +111,10 @@ string generate_dphase(int); // UNFINISHED
 int search_vector(string, vector <string>);
 
 string sample_frame(int);
+
+void analysis_menu(User&);
+
+void about();
 ///////--LOG WRITING && READING--///////
 void generate_entry(User&); // large function for writing and properly saving new log entries
 
@@ -144,6 +149,7 @@ void main_menu(); // the looping main menu function
 
 
 #endif /* PROTOTYPES_H_ */
+
 
 
 

@@ -1,3 +1,4 @@
+ */
 
 #include "log_users.h"
 
@@ -49,7 +50,7 @@ void User::browse_entries()
 			}
 
 			entry_choice -= 1;
-			entry_title = entries[entry_choice] + ".txt";
+			entry_title = profile_name + entries[entry_choice] + ".txt";
 			// cout << entry_title << endl; //testing
 			int a_count, e_count;
 			string a_char, e_char;
@@ -127,7 +128,7 @@ void User::week_report()
 
 	while (day_count > 0)
 	{
-		entry_title = entries[entry_choice] + ".txt";
+		entry_title = profile_name + entries[entry_choice] + ".txt";
 		//cout << "file name: " << entry_title;
 		// cout << entry_title << endl; //testing
 		int a_count, e_count;
@@ -244,7 +245,7 @@ void User::month_report()
 
 	while (day_count > 0)
 	{
-		entry_title = entries[entry_choice] + ".txt";
+		entry_title = profile_name + entries[entry_choice] + ".txt";
 		//cout << "file name: " << entry_title;
 		// cout << entry_title << endl; //testing
 		int a_count, e_count;
@@ -323,11 +324,11 @@ void User::month_report()
 		cout << "\t" << ex_names[i] << ": ";
 		cout << "$" << ex_prices[i] << endl;
 	}
+	cout << endl;
 }
 void User::day_mproj(string query_term)
 {
-	cout << "Mastery Query!" << endl;
-	cout << "This will give us an estimated time frame to achieve mastery in " << query_term << " based on a single day's performance" << endl;
+	cout << "This will give you an estimated time frame to achieve mastery in " << query_term << " based on a single day's performance" << endl;
 	cout << "Here are you availiable data points: " << endl;
 
 	int counter = 1;
@@ -360,7 +361,7 @@ void User::day_mproj(string query_term)
 
 	while (day_count > 0)
 	{
-		entry_title = entries[entry_choice] + ".txt";
+		entry_title = profile_name + entries[entry_choice] + ".txt";
 		//cout << "file name: " << entry_title;
 		// cout << entry_title << endl; //testing
 		int a_count, e_count;
@@ -422,8 +423,7 @@ void User::day_mproj(string query_term)
 }
 void User::week_mproj(string query_term)
 {
-	cout << "Mastery Query!" << endl;
-	cout << "This will give us an estimated time frame to achieve mastery in " << query_term << " based on a your performance totals during any 7 day period" << endl;
+	cout << "This will give you an estimated time frame to achieve mastery in " << query_term << " based on a your performance totals during any 7 day period" << endl;
 	cout << "Here are you availiable entries: " << endl;
 
 	int counter = 1;
@@ -456,7 +456,7 @@ void User::week_mproj(string query_term)
 
 	while (day_count > 0)
 	{
-		entry_title = entries[entry_choice] + ".txt";
+		entry_title = profile_name + entries[entry_choice] + ".txt";
 		//cout << "file name: " << entry_title;
 		// cout << entry_title << endl; //testing
 		int a_count, e_count;
@@ -518,8 +518,7 @@ void User::week_mproj(string query_term)
 }
 void User::month_mproj(string query_term)
 {
-	cout << "Mastery Query!" << endl;
-	cout << "This will give us an estimated time frame to achieve mastery in " << query_term << " based on a your performance totals during any 30 day period" << endl;
+	cout << "This will give you an estimated time frame to achieve mastery in " << query_term << " based on a your performance totals during any 30 day period" << endl;
 	cout << "Here are you availiable entries: " << endl;
 
 	int counter = 1;
@@ -552,7 +551,7 @@ void User::month_mproj(string query_term)
 
 	while (day_count > 0)
 	{
-		entry_title = entries[entry_choice] + ".txt";
+		entry_title = profile_name + entries[entry_choice] + ".txt";
 		//cout << "file name: " << entry_title;
 		// cout << entry_title << endl; //testing
 		int a_count, e_count;
@@ -746,7 +745,7 @@ float User::total_cost(string query_term, string period, int days)
 
 	while (day_count > 0)
 	{
-		entry_title = entries[entry_choice] + ".txt";
+		entry_title = profile_name + entries[entry_choice] + ".txt";
 		//cout << "file name: " << entry_title;
 		// cout << entry_title << endl; //testing
 		int a_count, e_count;
@@ -794,6 +793,94 @@ float User::total_cost(string query_term, string period, int days)
 	return ex_prices[place];
 }
 
+void analysis_menu(User& subject)
+{
+	bool on = true;
+	int selector;
+
+	while (on == true)
+	{
+		cout << endl << "--.Projection/Analysis Menu.--" << endl;
+		cout << "1)Weekly Report" << endl;
+		cout << "2)Monthly Report" << endl;
+		cout << "3)Mastery Projection by Day" << endl;
+		cout << "4)Mastery Projection by Week" << endl;
+		cout << "5)Mastery Projection by Month" << endl;
+		cout << "(((Expenditure Projections)))" << endl;
+				cout << "\t6)Day -> Week" << endl;
+		cout << "\t7)Day -> Month" << endl;
+		cout << "\t8)Day -> Year" << endl;
+		cout << "\t9)Week -> Month" << endl;
+		cout << "\t10)Week -> Quarter" << endl;
+		cout << "\t11)Week -> Year" << endl;
+		cout << "\t12)Month -> Quarter" << endl;
+		cout << "\t13)Month -> Year" << endl;
+		cout << "14)Exit" << endl << endl;
+
+		cout << "Please enter a selection: ";
+		cin >> selector;
+		cin.ignore();
+		cout << endl << endl;
+
+		string query;
+
+		switch (selector)
+		{
+		case 1:
+			subject.week_report();
+			continue;
+		case 2:
+			subject.month_report();
+			continue;
+		case 3:
+			cout << "Mastery Query!" << endl;
+			cout << "What activity would you like to examine?" << endl;
+			getline(cin, query);
+			subject.day_mproj(query);
+			continue;
+		case 4:
+			cout << "Mastery Query!" << endl;
+			cout << "What activity would you like to examine?" << endl;
+			getline(cin, query);
+			subject.week_mproj(query);
+			continue;
+		case 5:
+			cout << "Mastery Query!" << endl;
+			cout << "What activity would you like to examine?" << endl;
+			getline(cin, query);
+			subject.month_mproj(query);
+			continue;
+		case 6:
+			subject.ex_dweek();
+			continue;
+		case 7:
+			subject.ex_dmonth();
+			continue;
+		case 8:
+			subject.ex_dyear();
+			continue;
+		case 9:
+			subject.ex_wmonth();
+			continue;
+		case 10:
+			subject.ex_wquart();
+			continue;
+		case 11:
+			subject.ex_wyear();
+			continue;
+		case 12:
+			subject.ex_mquart();
+			continue;
+		case 13:
+			subject.ex_myear();
+			continue;
+		case 14:
+			cout << "Returning to main menu..." << endl << endl;
+			on = false;
+			continue;
+		}
+	}
+}
 ///////--ENTRY MEMBER FUNCTIONS--///////
 // constructor
 Entry::Entry(int a_count, int e_count)
@@ -864,8 +951,6 @@ Entry::Entry(const Entry &copy)
 // copy assignment operator
 Entry& Entry::operator = (const Entry &to_copy)
 {
-	cout << "Special Copy Operator Called" << endl; // testing
-
 	delete[] act_arr;
 	if (to_copy.act_count > 0)
 	{
@@ -927,11 +1012,11 @@ void Entry::write_ex(vector<string> &names, int position)
 	scope -> price = e_cost;
 }
 
-bool Entry::write_to_file()
+bool Entry::write_to_file(User& user)
 {
 	Activity * act_plate;
 	Expenditure * ex_plate;
-	string file_name = date + ".txt";
+	string file_name = user.profile_name + date + ".txt";
 
 	ofstream output_file(file_name);
 
@@ -1093,6 +1178,40 @@ string sample_frame(int days)
 	}
 }
 
+int search_vector(string objective, vector <string> subject)
+{
+	for (int i = 0; i < subject.size(); i++)
+	{
+		if (subject[i] == objective)
+		{
+			return i;
+		}
+	}
+	return 99;
+}
+
+void about()
+{
+	cout << "Welcome to the Mastery Log. This program can be used to do daily logging of activities" << endl;
+	cout << "and expenditures in service to one's goal setting and self-management. When entering the" << endl;
+	cout << "program you will be asked if you have a profile. If you do, you may enter your username." << endl;
+	cout << "If you do not, you will be asked if you would like to create one. The program will guide" << endl;
+	cout << "you through that process. If you decline, you will be assigned the 'guest' account." << endl << endl;
+	cout << "From the main menu you can log new entries, read previous entries, or apply analytical tools" << endl;
+	cout << "to your growing collection of entries. You can receive weekly or monthly summaries. You can" << endl;
+	cout << "calculate, based on various sampling sizes, how long before you will reach 10,000 hours of" << endl;
+	cout << "practice in any activity within your logs. THis prediction is  based on your progress during the specified time" << endl;
+	cout << " period. The 10,000 hour benchmark is regarded by researchers as a universal requirement to reaching the" << endl;
+	cout << "mythical, elusive, and exalted state of 'Mastery'.This applies to any skill and any learner." << endl;
+	cout << "It is from this concept the program derives it's name." << endl << endl;
+	cout << "Finally, you can project your future spending in any category you have logged as an expenditure in your" << endl;
+	cout << "entries. You select a category, a sample size, and a time frame which you want to project into." << endl;
+	cout << "The program then performs the calculation and presents the results, hopefully assisting in budgeting" << endl;
+	cout << "and financial planning." << endl << endl;
+	cout << "It is all, mostly, self explanatory so dont be afraid to make a profile and check it all out for yourself!" << endl;
+	cout << "We hope you enjoy it and make good use of it. Remember, the key to any system is consistency. So get logging!" << endl << endl;
+}
+
 ///////--LOG WRITING && READING FUNCTIONS--///////
 void generate_entry(User& subject)
 {
@@ -1240,7 +1359,7 @@ void generate_entry(User& subject)
 	{
 		bool success0, success1;
 
-		success0 = this_entry.write_to_file();
+		success0 = this_entry.write_to_file(subject);
 
 		(success0 == true ? cout << "Successfully Logged!" << endl : cout << "Error. Log Unsuccessful..." << endl);
 
@@ -1510,7 +1629,7 @@ User greeter()
 	// determination of membership status
 	while (flag != 'n' && flag != 'y')
 	{
-		cout << "Are you already a member? (y/n)" << endl;
+		cout << "Do you have a profile? (y/n)" << endl;
 		cin >> flag;
 	}
 
@@ -1556,7 +1675,7 @@ User greeter()
 
 		while (flag_2 != 'y' && flag_2 != 'n')
 		{
-			cout << "Would you like to create a MASTERY FAMILY profile? (y/n)" << endl;
+			cout << "Would you like to create a MASTERY LOG profile? (y/n)" << endl;
 			cin >> flag_2;
 			cin.ignore();
 		}
@@ -1599,23 +1718,6 @@ User greeter()
 	// final greeting and termination
 	cout << "Good " << d_phase << ", " << final_name << "!" << endl;
 	return subject;
-}
-
-void main_menu()
-{
-
-}
-
-int search_vector(string objective, vector <string> subject)
-{
-	for (int i = 0; i < subject.size(); i++)
-	{
-		if (subject[i] == objective)
-		{
-			return i;
-		}
-	}
-	return 99;
 }
 
 

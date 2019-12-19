@@ -22,18 +22,8 @@ int main()
 	//display_profile(my_user);
 	//cout << endl;
 
-
-	my_user.ex_dweek();
-	my_user.ex_dmonth();
-	my_user.ex_dyear();
-	my_user.ex_wmonth();
-	my_user.ex_wquart();
-	my_user.ex_wyear();
-	my_user.ex_mquart();
-	my_user.ex_myear();
-
 	// INSERT PHILOSOPHICAL/JOKE MESSAGE HERE
-/*
+
 	// MAIN MENU
 	bool on = true;
 
@@ -46,7 +36,7 @@ int main()
 		cout << "j) JOURNAL an entry" << endl;
 		cout << "r) select one of your entries to READ" << endl;
 		cout << "p) make PROJECTIONS based on your entries" << endl;
-		cout << "a) learn ABOUT mastery family" << endl;
+		cout << "a) learn ABOUT mastery log program" << endl;
 		cout << "x) EXIT" << endl;
 
 		cin >> selector;
@@ -64,14 +54,13 @@ int main()
 		case 'r':
 				my_user.browse_entries();
 				continue;
-			// option 3: MAKE PROJECTIONS (interesting design decision... should there be any automation
-			// to the process based on profile? Should my profile keep a standing count of how many hours
-			// I have in my favored activity, or should it all be file based when I access this part of the
-			// program? Probably depends largely on the speed of file I/O and processing)
+			// option 3: MAKE PROJECTIONS
 		case 'p':
+				analysis_menu(my_user);
 				continue;
 			// option 4: about/help
 		case 'a':
+				about();
 				continue;
 		case 'x':
 			cout << "Until next time..." << endl;
@@ -82,7 +71,7 @@ int main()
 			break;
 		}
 	}
-*/
+
 	return 0;
 }
 
@@ -102,15 +91,16 @@ int main()
  */
 
 // TO DO
-// 1) Analysis Functions SEE PLANNING SHEET
-// 2) Either use a file system or change the naming convention
-// 3) Bug Test SEE NOTES
-// 4) Create testing suite of files and a README FILES DONE
+// 1) Analysis Function Input Validation
+
+// 3) Bug Test HALF DONE
+// 4) Create README for Professor
 // 4) Write up SEE NOTES
-// 5) Extra features (cool quotes, fav_act utilization, editing)
-// 6) WHAT IF USER ENTERS A DATE FOR BEGINNING A RANGE WHICH CANNOT BE COMPLETED?
+// 5) Extra features (cool quotes, fav_act utilization )
+// 1) WHAT IF USER ENTERS A DATE FOR BEGINNING A RANGE WHICH CANNOT BE COMPLETED?
 	// WE NEED TO CATCH THAT SITUATION
 	// ALSO, WHAT IF THE QUERY TERM IS NOT IN THE VECTOR OF ACTIVITIES? IT WILL QUERY vector[99]. BAD!
 
+// Implement binary paradigm into file system
 
 
